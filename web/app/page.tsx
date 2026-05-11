@@ -13,6 +13,7 @@ export default function Home() {
             <Link href="/auth/sign-in">Sign in</Link>
             <Link href="/onboarding">Onboarding</Link>
             <Link href="/collaboration">Collaboration</Link>
+            <Link href="/community">Community</Link>
             <Link href="/marketplace">Marketplace</Link>
             <Link href="/plugins">Plugins</Link>
             <Link href="/admin">Admin</Link>
@@ -65,6 +66,13 @@ export default function Home() {
             </p>
           </div>
           <div className="card">
+            <div className="label">Community-led roadmap</div>
+            <h2>Let users request the next platforms and integrations.</h2>
+            <p className="muted">
+              Integration demand, bounties, and votes help decide what gets built next while keeping the community engaged.
+            </p>
+          </div>
+          <div className="card">
             <div className="label">Marketplace ready</div>
             <h2>Sell digital goods, physical goods, or service requests.</h2>
             <p className="muted">
@@ -89,6 +97,7 @@ export default function Home() {
               <li>Five-click onboarding flow with terms and marketplace policy acceptance</li>
               <li>Gamified creator dashboard with ranks, rewards, and referral positioning</li>
               <li>Plugin catalogue with MCP-ready connector metadata</li>
+              <li>Community integration requests and demand signals</li>
               <li>Secure upload URL issuance for Azure Blob storage</li>
               <li>Admin-only audit trail and moderation queue endpoints</li>
             </ul>

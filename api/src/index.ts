@@ -17,6 +17,7 @@ import { health } from "./functions/health";
 import { items } from "./functions/items";
 import { moderationQueue } from "./functions/moderation";
 import { completeOnboarding } from "./functions/onboarding";
+import { adminPlatformRequests, platformRequests } from "./functions/platform-requests";
 import { qualification } from "./functions/qualification";
 import { presignUpload } from "./functions/uploads";
 
@@ -172,4 +173,18 @@ app.http("admin-collaboration-overview", {
   authLevel: "anonymous",
   route: "admin/collaboration",
   handler: adminCollaborationOverview,
+});
+
+app.http("platform-requests", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "platform-requests",
+  handler: platformRequests,
+});
+
+app.http("admin-platform-requests", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "admin/platform-requests",
+  handler: adminPlatformRequests,
 });

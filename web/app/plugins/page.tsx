@@ -30,6 +30,7 @@ export default function PluginsPage() {
         <div className="brand">OnlyFling Starter</div>
         <div className="navLinks">
           <Link href="/">Home</Link>
+          <Link href="/community">Community</Link>
           <Link href="/marketplace">Marketplace</Link>
           <Link href="/admin">Admin</Link>
         </div>
@@ -55,6 +56,18 @@ export default function PluginsPage() {
             </p>
           </article>
         ))}
+      </section>
+
+      <section className="section panel">
+        <div className="label">Need another integration?</div>
+        <p className="muted" style={{ marginTop: 12 }}>
+          Users can now submit platform requests in the community area so demand can be ranked before new connectors are built.
+        </p>
+        <div className="heroActions" style={{ marginTop: 16 }}>
+          <Link className="button" href="/community">
+            Open community requests
+          </Link>
+        </div>
       </section>
     </main>
   );

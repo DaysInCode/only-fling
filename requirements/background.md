@@ -203,6 +203,27 @@ Preference prediction should be conservative and transparent:
 - used only to improve ranking/recommendation order
 - always overrideable by user controls and filters
 
+## Community-led growth
+
+The platform should also support a **community demand loop** so users can request the next platforms and integrations to support.
+
+### Community/platform request flow
+
+1. a creator or member opens the community/request area
+2. they submit a requested platform or integration
+3. requests are ranked by visible demand signals
+4. admin uses those signals to prioritise roadmap delivery
+
+### Lucrative community enhancements
+
+- affiliate launch links after first earnings milestone
+- capped referral rewards for first sales or first days, whichever comes first
+- community bounties for requested integrations
+- creator streak rewards tied to uploads, sales, and referrals
+- roadmap voting and transparent status for requested platforms
+
+These should feel **friendly, momentum-driven, and competitive without becoming deceptive**.
+
 ## Current blockers
 
 1. The requested remote repository `https://github.com/DaysInCode/only-fling.git` is not currently reachable from this environment (`repository not found`).
@@ -217,5 +238,6 @@ Preference prediction should be conservative and transparent:
 - mini CRM API + UI
 - mobile companion dashboard
 - collaboration discovery API + UI
+- community platform-request API + UI
 - Cypress smoke coverage
 - local emulator wiring and deployment verification

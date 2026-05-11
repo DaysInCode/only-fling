@@ -67,3 +67,9 @@ export const collaborationResponseSchema = z.object({
   requestId: z.string().min(2).max(120),
   accept: z.boolean(),
 });
+
+export const platformRequestSchema = z.object({
+  platformName: z.string().min(2).max(80),
+  type: z.enum(["publishing", "payments", "analytics", "messaging", "crm"]),
+  note: z.string().min(5).max(240),
+});

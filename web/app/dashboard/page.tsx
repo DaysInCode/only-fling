@@ -40,6 +40,7 @@ export default function DashboardPage() {
         <div className="navLinks">
           <Link href="/">Home</Link>
           <Link href="/collaboration">Collaboration</Link>
+          <Link href="/community">Community</Link>
           <Link href="/marketplace">Marketplace</Link>
           <Link href="/plugins">Plugins</Link>
         </div>
@@ -90,6 +91,11 @@ export default function DashboardPage() {
           <div className="label">Collaboration</div>
           <div className="kpi">Near me</div>
           <p className="muted">Opt in to nearby collaboration discovery, highlights, and mutual contact release.</p>
+        </div>
+        <div className="card">
+          <div className="label">Community demand</div>
+          <div className="kpi">Request</div>
+          <p className="muted">Ask for the next integration, vote with demand, and grow affiliate-driven reach.</p>
         </div>
       </section>
     </main>

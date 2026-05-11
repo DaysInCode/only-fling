@@ -173,3 +173,15 @@ export interface CollaborationAlert {
   status: "new" | "opened";
   createdAt: string;
 }
+
+export interface PlatformRequest {
+  id: string;
+  userId: string;
+  platformName: string;
+  type: "publishing" | "payments" | "analytics" | "messaging" | "crm";
+  note: string;
+  requestedByDisplayName: string;
+  status: "new" | "reviewing" | "planned";
+  votes: number;
+  createdAt: string;
+}

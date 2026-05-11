@@ -13,6 +13,7 @@ import type {
   ModerationCase,
   NearbyMember,
   OnboardingRecord,
+  PlatformRequest,
   QualificationRule,
   Role,
   SessionRecord,
@@ -154,6 +155,30 @@ const memory = (() => {
     ]),
     collaborationRequests: new Map<string, CollaborationRequest>(),
     collaborationAlerts: new Map<string, CollaborationAlert[]>(),
+    platformRequests: [
+      {
+        id: "platform-request-telegram-bot",
+        userId: creatorOne.id,
+        platformName: "Telegram bot onboarding",
+        type: "messaging",
+        note: "Help smaller creators onboard and receive alerts through Telegram.",
+        requestedByDisplayName: creatorOne.displayName,
+        status: "reviewing",
+        votes: 14,
+        createdAt: now,
+      },
+      {
+        id: "platform-request-reddit-publishing",
+        userId: creatorTwo.id,
+        platformName: "Reddit publishing support",
+        type: "publishing",
+        note: "Allow community-driven teaser posting and attribution back to creator offers.",
+        requestedByDisplayName: creatorTwo.displayName,
+        status: "new",
+        votes: 9,
+        createdAt: now,
+      },
+    ] as PlatformRequest[],
   };
 })();
 
@@ -763,4 +788,31 @@ export async function listCollaborationRequests(userId: string) {
 
 export async function listAllCollaborationProfiles() {
   return Array.from(memory.collaborationProfiles.values());
+}
+
+export async function listPlatformRequests() {
+  return [...memory.platformRequests].sort((left, right) => right.votes - left.votes || left.platformName.localeCompare(right.platformName));
+}
+
+export async function createPlatformRequest(
+  userId: string,
+  requestedByDisplayName: string,
+  platformName: string,
+  type: PlatformRequest["type"],
+  note: string,
+) {
+  const request: PlatformRequest = {
+    id: `platform-request-${createId()}`,
+    userId,
+    platformName,
+    type,
+    note,
+    requestedByDisplayName,
+    status: "new",
+    votes: 1,
+    createdAt: new Date().toISOString(),
+  };
+
+  memory.platformRequests.unshift(request);
+  return request;
 }
