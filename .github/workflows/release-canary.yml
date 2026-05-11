@@ -1,0 +1,126 @@
+name: release-canary
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP_PROD }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Reconcile production infra
+        shell: bash
+        run: |
+          az group create --name "$RESOURCE_GROUP" --location "$AZURE_LOCATION"
+          outputs=$(az deployment group create \
+            --resource-group "$RESOURCE_GROUP" \
+            --template-file infra/main.bicep \
+            --parameters infra/parameters/prod.bicepparam \
+            --query properties.outputs -o json)
+          echo "WEB_PRIMARY_STORAGE=$(echo "$outputs" | jq -r '.webPrimaryStorageName.value')" >> "$GITHUB_ENV"
+          echo "WEB_CANARY_STORAGE=$(echo "$outputs" | jq -r '.webCanaryStorageName.value')" >> "$GITHUB_ENV"
+          echo "FUNCTION_PRIMARY=$(echo "$outputs" | jq -r '.functionPrimaryName.value')" >> "$GITHUB_ENV"
+          echo "FUNCTION_CANARY=$(echo "$outputs" | jq -r '.functionCanaryName.value')" >> "$GITHUB_ENV"
+          echo "FRONTDOOR_HOST=$(echo "$outputs" | jq -r '.frontDoorEndpointHost.value')" >> "$GITHUB_ENV"
+          echo "FRONTDOOR_PROFILE=$(echo "$outputs" | jq -r '.frontDoorProfileName.value')" >> "$GITHUB_ENV"
+      - name: Select inactive ring
+        shell: bash
+        run: |
+          primary_weight=$(az afd origin show \
+            --resource-group "$RESOURCE_GROUP" \
+            --profile-name "$FRONTDOOR_PROFILE" \
+            --origin-group-name web-origins \
+            --origin-name web-primary \
+            --query properties.weight -o tsv)
+          if [ "$primary_weight" = "1000" ]; then
+            echo "TARGET_RING=canary" >> "$GITHUB_ENV"
+            echo "TARGET_WEB_STORAGE=$WEB_CANARY_STORAGE" >> "$GITHUB_ENV"
+            echo "TARGET_FUNCTION=$FUNCTION_CANARY" >> "$GITHUB_ENV"
+            echo "STABLE_WEB_ORIGIN=web-primary" >> "$GITHUB_ENV"
+            echo "TARGET_WEB_ORIGIN=web-canary" >> "$GITHUB_ENV"
+            echo "STABLE_API_ORIGIN=api-primary" >> "$GITHUB_ENV"
+            echo "TARGET_API_ORIGIN=api-canary" >> "$GITHUB_ENV"
+          else
+            echo "TARGET_RING=primary" >> "$GITHUB_ENV"
+            echo "TARGET_WEB_STORAGE=$WEB_PRIMARY_STORAGE" >> "$GITHUB_ENV"
+            echo "TARGET_FUNCTION=$FUNCTION_PRIMARY" >> "$GITHUB_ENV"
+            echo "STABLE_WEB_ORIGIN=web-canary" >> "$GITHUB_ENV"
+            echo "TARGET_WEB_ORIGIN=web-primary" >> "$GITHUB_ENV"
+            echo "STABLE_API_ORIGIN=api-canary" >> "$GITHUB_ENV"
+            echo "TARGET_API_ORIGIN=api-primary" >> "$GITHUB_ENV"
+          fi
+      - name: Build web
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+      - name: Publish web ring
+        shell: bash
+        run: |
+          az storage blob upload-batch \
+            --account-name "$TARGET_WEB_STORAGE" \
+            --auth-mode login \
+            --destination '$web' \
+            --source web/out \
+            --overwrite
+      - name: Build and package API
+        shell: bash
+        run: |
+          cd api
+          npm ci
+          npm run build
+          npm prune --omit=dev
+          zip -r ../api-release.zip dist host.json package.json node_modules
+      - name: Publish API ring
+        shell: bash
+        run: |
+          az functionapp deployment source config-zip \
+            --resource-group "$RESOURCE_GROUP" \
+            --name "$TARGET_FUNCTION" \
+            --src api-release.zip
+      - name: Smoke test target ring
+        shell: bash
+        run: |
+          curl -fsS "https://${TARGET_FUNCTION}.azurewebsites.net/api/health"
+      - name: Progressive canary promotion
+        shell: bash
+        run: |
+          set -e
+          restore_stable() {
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name web-origins --origin-name "$STABLE_WEB_ORIGIN" --weight 1000 >/dev/null
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name web-origins --origin-name "$TARGET_WEB_ORIGIN" --weight 1 >/dev/null
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name api-origins --origin-name "$STABLE_API_ORIGIN" --weight 1000 >/dev/null
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name api-origins --origin-name "$TARGET_API_ORIGIN" --weight 1 >/dev/null
+          }
+          trap restore_stable ERR
+
+          for target in 50 250 1000; do
+            stable=$((1000-target))
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name web-origins --origin-name "$STABLE_WEB_ORIGIN" --weight "$stable"
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name web-origins --origin-name "$TARGET_WEB_ORIGIN" --weight "$target"
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name api-origins --origin-name "$STABLE_API_ORIGIN" --weight "$stable"
+            az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name api-origins --origin-name "$TARGET_API_ORIGIN" --weight "$target"
+            sleep 90
+            curl -fsS "https://${FRONTDOOR_HOST}/"
+            curl -fsS "https://${FRONTDOOR_HOST}/api/health"
+          done

@@ -1,0 +1,86 @@
+name: preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+  RESOURCE_GROUP: rg-onlyfling-pr-${{ github.event.number }}
+  ENV_NAME: pr${{ github.event.number }}
+
+jobs:
+  deploy-preview:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    environment: preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Provision preview stack
+        shell: bash
+        run: |
+          az group create --name "$RESOURCE_GROUP" --location "$AZURE_LOCATION"
+          outputs=$(az deployment group create \
+            --resource-group "$RESOURCE_GROUP" \
+            --template-file infra/main.bicep \
+            --parameters environmentName="$ENV_NAME" location="$AZURE_LOCATION" enableCanary=false \
+            --query properties.outputs -o json)
+          echo "WEB_STORAGE=$(echo "$outputs" | jq -r '.webPrimaryStorageName.value')" >> "$GITHUB_ENV"
+          echo "API_FUNCTION=$(echo "$outputs" | jq -r '.functionPrimaryName.value')" >> "$GITHUB_ENV"
+      - name: Build web
+        working-directory: web
+        run: |
+          npm ci
+          npm run build
+      - name: Publish web preview
+        shell: bash
+        run: |
+          az storage blob upload-batch \
+            --account-name "$WEB_STORAGE" \
+            --auth-mode login \
+            --destination '$web' \
+            --source web/out \
+            --overwrite
+      - name: Build and package API
+        shell: bash
+        run: |
+          cd api
+          npm ci
+          npm run build
+          npm prune --omit=dev
+          zip -r ../api-preview.zip dist host.json package.json node_modules
+      - name: Publish API preview
+        shell: bash
+        run: |
+          az functionapp deployment source config-zip \
+            --resource-group "$RESOURCE_GROUP" \
+            --name "$API_FUNCTION" \
+            --src api-preview.zip
+
+  cleanup-preview:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Delete preview resource group
+        run: az group delete --name ${{ env.RESOURCE_GROUP }} --yes --no-wait

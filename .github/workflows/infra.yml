@@ -1,0 +1,42 @@
+name: infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - prod
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/**"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'prod' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Ensure resource group
+        run: az group create --name ${{ vars.AZURE_RESOURCE_GROUP_PROD }} --location ${{ vars.AZURE_LOCATION }}
+      - name: Deploy Bicep
+        run: >
+          az deployment group create
+          --resource-group ${{ vars.AZURE_RESOURCE_GROUP_PROD }}
+          --template-file infra/main.bicep
+          --parameters infra/parameters/${{ github.event.inputs.environment || 'prod' }}.bicepparam
