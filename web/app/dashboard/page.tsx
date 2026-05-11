@@ -39,6 +39,7 @@ export default function DashboardPage() {
         <div className="brand">OnlyFling Starter</div>
         <div className="navLinks">
           <Link href="/">Home</Link>
+          <Link href="/collaboration">Collaboration</Link>
           <Link href="/marketplace">Marketplace</Link>
           <Link href="/plugins">Plugins</Link>
         </div>
@@ -84,6 +85,11 @@ export default function DashboardPage() {
           <div className="kpi">
             {summary ? `${summary.currency} ${(summary.monthlyGrossMinor / 100).toFixed(0)}` : "--"}
           </div>
+        </div>
+        <div className="card">
+          <div className="label">Collaboration</div>
+          <div className="kpi">Near me</div>
+          <p className="muted">Opt in to nearby collaboration discovery, highlights, and mutual contact release.</p>
         </div>
       </section>
     </main>

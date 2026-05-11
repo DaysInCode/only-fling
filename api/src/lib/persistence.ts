@@ -4,10 +4,14 @@ import type {
   AuditEvent,
   AuthChallenge,
   CatalogItem,
+  CollaborationAlert,
+  CollaborationProfile,
+  CollaborationRequest,
   DashboardSummary,
   EarningsReportRow,
   LeadRecord,
   ModerationCase,
+  NearbyMember,
   OnboardingRecord,
   QualificationRule,
   Role,
@@ -31,9 +35,33 @@ const memory = (() => {
     createdAt: now,
   };
 
+  const creatorOne: UserProfile = {
+    id: "user-creator-anna",
+    email: "anna@example.com",
+    role: "creator",
+    displayName: "Anna",
+    createdAt: now,
+  };
+
+  const creatorTwo: UserProfile = {
+    id: "user-creator-luca",
+    email: "luca@example.com",
+    role: "creator",
+    displayName: "Luca",
+    createdAt: now,
+  };
+
   return {
-    users: new Map<string, UserProfile>([[adminUser.id, adminUser]]),
-    usersByEmail: new Map<string, UserProfile>([[normalizeKey(adminUser.email), adminUser]]),
+    users: new Map<string, UserProfile>([
+      [adminUser.id, adminUser],
+      [creatorOne.id, creatorOne],
+      [creatorTwo.id, creatorTwo],
+    ]),
+    usersByEmail: new Map<string, UserProfile>([
+      [normalizeKey(adminUser.email), adminUser],
+      [normalizeKey(creatorOne.email), creatorOne],
+      [normalizeKey(creatorTwo.email), creatorTwo],
+    ]),
     sessions: new Map<string, SessionRecord>(),
     challenges: new Map<string, AuthChallenge[]>(),
     onboarding: new Map<string, OnboardingRecord>(),
@@ -76,6 +104,56 @@ const memory = (() => {
         details: "Initialized starter platform state.",
       },
     ] satisfies AuditEvent[],
+    collaborationProfiles: new Map<string, CollaborationProfile>([
+      [
+        creatorOne.id,
+        {
+          userId: creatorOne.id,
+          displayName: "Anna",
+          avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80",
+          bio: "Available for creator shoots with an upbeat style and quick collaboration turnaround.",
+          city: "Bristol",
+          countryCode: "GB",
+          latitude: 51.4545,
+          longitude: -2.5879,
+          locationDisclosureAccepted: true,
+          promotedHighlight: true,
+          promotedDisclosureAccepted: true,
+          notifyOnNearby: true,
+          availableNow: true,
+          contactHandle: "@anna-collabs",
+          preferences: ["editorial", "fitness", "glamour"],
+          collaborationTypes: ["photo", "video"],
+          createdAt: now,
+          updatedAt: now,
+        },
+      ],
+      [
+        creatorTwo.id,
+        {
+          userId: creatorTwo.id,
+          displayName: "Luca",
+          avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
+          bio: "Interested in short-form collaborative sets and promo bundles with clear planning.",
+          city: "Bath",
+          countryCode: "GB",
+          latitude: 51.3813,
+          longitude: -2.359,
+          locationDisclosureAccepted: true,
+          promotedHighlight: false,
+          promotedDisclosureAccepted: false,
+          notifyOnNearby: true,
+          availableNow: true,
+          contactHandle: "@luca-content",
+          preferences: ["lifestyle", "duo", "promo"],
+          collaborationTypes: ["photo", "bundle"],
+          createdAt: now,
+          updatedAt: now,
+        },
+      ],
+    ]),
+    collaborationRequests: new Map<string, CollaborationRequest>(),
+    collaborationAlerts: new Map<string, CollaborationAlert[]>(),
   };
 })();
 
@@ -478,4 +556,211 @@ export async function qualificationRules(): Promise<QualificationRule[]> {
       status: "recommended",
     },
   ];
+}
+
+function toRadians(value: number) {
+  return (value * Math.PI) / 180;
+}
+
+function distanceKm(
+  leftLatitude: number,
+  leftLongitude: number,
+  rightLatitude: number,
+  rightLongitude: number,
+) {
+  const earthRadiusKm = 6371;
+  const dLat = toRadians(rightLatitude - leftLatitude);
+  const dLon = toRadians(rightLongitude - leftLongitude);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(leftLatitude)) *
+      Math.cos(toRadians(rightLatitude)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusKm * c;
+}
+
+function predictedAffinity(viewer: CollaborationProfile, candidate: CollaborationProfile) {
+  const sharedPreferences = viewer.preferences.filter((item) => candidate.preferences.includes(item)).length;
+  const sharedTypes = viewer.collaborationTypes.filter((item) => candidate.collaborationTypes.includes(item)).length;
+  const bonus = candidate.promotedHighlight ? 10 : 0;
+  return Math.min(100, sharedPreferences * 20 + sharedTypes * 15 + bonus + (candidate.availableNow ? 10 : 0));
+}
+
+export async function getCollaborationProfile(userId: string) {
+  return memory.collaborationProfiles.get(userId) ?? null;
+}
+
+export async function saveCollaborationProfile(
+  userId: string,
+  input: Omit<CollaborationProfile, "userId" | "createdAt" | "updatedAt">,
+) {
+  const existing = memory.collaborationProfiles.get(userId);
+  const now = new Date().toISOString();
+  const record: CollaborationProfile = {
+    userId,
+    createdAt: existing?.createdAt ?? now,
+    updatedAt: now,
+    ...input,
+  };
+
+  memory.collaborationProfiles.set(userId, record);
+  return record;
+}
+
+export async function findNearbyMembers(viewerUserId: string, maxKm = 75): Promise<NearbyMember[]> {
+  const viewer = memory.collaborationProfiles.get(viewerUserId);
+  if (!viewer || !viewer.locationDisclosureAccepted) {
+    return [];
+  }
+
+  return Array.from(memory.collaborationProfiles.values())
+    .filter((profile) => profile.userId !== viewerUserId && profile.locationDisclosureAccepted)
+    .map((profile) => ({
+      userId: profile.userId,
+      displayName: profile.displayName,
+      avatarUrl: profile.avatarUrl,
+      city: profile.city,
+      promotedHighlight: profile.promotedHighlight,
+      availableNow: profile.availableNow,
+      preferences: profile.preferences,
+      collaborationTypes: profile.collaborationTypes,
+      distanceKm: Number(distanceKm(viewer.latitude, viewer.longitude, profile.latitude, profile.longitude).toFixed(1)),
+      predictedAffinity: predictedAffinity(viewer, profile),
+      canRequestContact: true,
+    }))
+    .filter((entry) => entry.distanceKm <= maxKm)
+    .sort((left, right) => {
+      if (left.promotedHighlight !== right.promotedHighlight) {
+        return left.promotedHighlight ? -1 : 1;
+      }
+
+      if (left.availableNow !== right.availableNow) {
+        return left.availableNow ? -1 : 1;
+      }
+
+      return right.predictedAffinity - left.predictedAffinity || left.distanceKm - right.distanceKm;
+    });
+}
+
+function alertMessage(target: CollaborationProfile, viewer: CollaborationProfile) {
+  return `${target.displayName} is available in ${target.city} for ${target.collaborationTypes.join(" / ")} collaborations.`;
+}
+
+export async function refreshAlertsForUser(userId: string) {
+  const viewer = memory.collaborationProfiles.get(userId);
+  if (!viewer || !viewer.notifyOnNearby) {
+    return [];
+  }
+
+  const nearby = (await findNearbyMembers(userId, 35)).filter((entry) => entry.availableNow);
+  const alerts: CollaborationAlert[] = nearby.slice(0, 3).map((entry) => {
+    const target = memory.collaborationProfiles.get(entry.userId)!;
+    return {
+      id: `alert-${userId}-${entry.userId}`,
+      userId,
+      targetUserId: entry.userId,
+      title: `${target.displayName} is nearby`,
+      body: alertMessage(target, viewer),
+      status: "new",
+      createdAt: new Date().toISOString(),
+    };
+  });
+
+  memory.collaborationAlerts.set(userId, alerts);
+  return alerts;
+}
+
+export async function listAlerts(userId: string) {
+  return memory.collaborationAlerts.get(userId) ?? [];
+}
+
+export async function createCollaborationRequest(
+  fromUserId: string,
+  toUserId: string,
+  collaborationType: "photo" | "video" | "bundle",
+  note: string,
+) {
+  const request: CollaborationRequest = {
+    id: `request-${createId()}`,
+    fromUserId,
+    toUserId,
+    collaborationType,
+    note,
+    status: "pending",
+    createdAt: new Date().toISOString(),
+  };
+
+  memory.collaborationRequests.set(request.id, request);
+
+  const targetProfile = memory.collaborationProfiles.get(toUserId);
+  if (targetProfile) {
+    const current = memory.collaborationAlerts.get(toUserId) ?? [];
+    current.unshift({
+      id: `alert-${createId()}`,
+      userId: toUserId,
+      targetUserId: fromUserId,
+      title: `${memory.collaborationProfiles.get(fromUserId)?.displayName ?? "A member"} wants to connect`,
+      body: `${request.collaborationType} collaboration request in ${targetProfile.city}.`,
+      status: "new",
+      createdAt: new Date().toISOString(),
+    });
+    memory.collaborationAlerts.set(toUserId, current);
+  }
+
+  return request;
+}
+
+export async function respondToCollaborationRequest(requestId: string, actorUserId: string, accept: boolean) {
+  const request = memory.collaborationRequests.get(requestId);
+  if (!request || request.toUserId !== actorUserId) {
+    throw new Error("not-found");
+  }
+
+  request.status = accept ? "accepted" : "declined";
+  request.respondedAt = new Date().toISOString();
+  memory.collaborationRequests.set(request.id, request);
+
+  if (accept) {
+    const fromProfile = memory.collaborationProfiles.get(request.fromUserId);
+    const toProfile = memory.collaborationProfiles.get(request.toUserId);
+    if (fromProfile && toProfile) {
+      const originAlerts = memory.collaborationAlerts.get(request.fromUserId) ?? [];
+      originAlerts.unshift({
+        id: `alert-${createId()}`,
+        userId: request.fromUserId,
+        targetUserId: request.toUserId,
+        title: `${toProfile.displayName} accepted your request`,
+        body: `You can now contact ${toProfile.contactHandle}. They will also receive ${fromProfile.contactHandle}.`,
+        status: "new",
+        createdAt: new Date().toISOString(),
+      });
+      memory.collaborationAlerts.set(request.fromUserId, originAlerts);
+
+      const targetAlerts = memory.collaborationAlerts.get(request.toUserId) ?? [];
+      targetAlerts.unshift({
+        id: `alert-${createId()}`,
+        userId: request.toUserId,
+        targetUserId: request.fromUserId,
+        title: `Contact released for ${fromProfile.displayName}`,
+        body: `You can now contact ${fromProfile.contactHandle}.`,
+        status: "new",
+        createdAt: new Date().toISOString(),
+      });
+      memory.collaborationAlerts.set(request.toUserId, targetAlerts);
+    }
+  }
+
+  return request;
+}
+
+export async function listCollaborationRequests(userId: string) {
+  return Array.from(memory.collaborationRequests.values()).filter(
+    (request) => request.fromUserId === userId || request.toUserId === userId,
+  );
+}
+
+export async function listAllCollaborationProfiles() {
+  return Array.from(memory.collaborationProfiles.values());
 }

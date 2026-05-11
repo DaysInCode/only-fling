@@ -18,6 +18,14 @@ const cards = [
     title: "Admin operations",
     body: "Users, subscriptions, disputes, audit trails, and earnings reporting for staff and accountants.",
   },
+  {
+    title: "Nearby collaboration",
+    body: "Members can opt into coarse location sharing, appear in nearby discovery, and request content collaborations.",
+  },
+  {
+    title: "Mutual contact release",
+    body: "Contact details only unlock after both sides accept the collaboration request, while admin keeps full visibility.",
+  },
 ];
 
 export default function App() {
@@ -41,6 +49,13 @@ export default function App() {
             <Text style={styles.metricValue}>Free + Pro</Text>
             <Text style={styles.metricLabel}>account tiers</Text>
           </View>
+        </View>
+
+        <View style={styles.alertCard}>
+          <Text style={styles.alertTitle}>Nearby alert preview</Text>
+          <Text style={styles.alertBody}>
+            Anna is available 12 km away for photo/video collaboration. Tap to review the request and contact rules.
+          </Text>
         </View>
 
         {cards.map((card) => (
@@ -111,6 +126,21 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 20,
     gap: 10,
+  },
+  alertCard: {
+    backgroundColor: "#2c1f48",
+    borderRadius: 24,
+    padding: 20,
+    gap: 8,
+  },
+  alertTitle: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  alertBody: {
+    color: "#efe5ff",
+    lineHeight: 22,
   },
   cardTitle: {
     color: "#ffffff",

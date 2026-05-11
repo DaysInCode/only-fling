@@ -10,4 +10,10 @@ describe("OnlyFling starter", () => {
     cy.contains("Passwordless sign-in");
     cy.contains("Request code");
   });
+
+  it("renders the collaboration page", () => {
+    cy.visit("/collaboration");
+    cy.contains("Nearby collaboration discovery");
+    cy.contains("Save collaboration profile");
+  });
 });

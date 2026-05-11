@@ -117,3 +117,59 @@ export interface QualificationRule {
   title: string;
   status: "required" | "recommended";
 }
+
+export interface CollaborationProfile {
+  userId: string;
+  displayName: string;
+  avatarUrl: string;
+  bio: string;
+  city: string;
+  countryCode: string;
+  latitude: number;
+  longitude: number;
+  locationDisclosureAccepted: boolean;
+  promotedHighlight: boolean;
+  promotedDisclosureAccepted: boolean;
+  notifyOnNearby: boolean;
+  availableNow: boolean;
+  contactHandle: string;
+  preferences: string[];
+  collaborationTypes: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NearbyMember {
+  userId: string;
+  displayName: string;
+  avatarUrl: string;
+  city: string;
+  promotedHighlight: boolean;
+  availableNow: boolean;
+  preferences: string[];
+  collaborationTypes: string[];
+  distanceKm: number;
+  predictedAffinity: number;
+  canRequestContact: boolean;
+}
+
+export interface CollaborationRequest {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  collaborationType: "photo" | "video" | "bundle";
+  note: string;
+  status: "pending" | "accepted" | "declined";
+  createdAt: string;
+  respondedAt?: string;
+}
+
+export interface CollaborationAlert {
+  id: string;
+  userId: string;
+  targetUserId: string;
+  title: string;
+  body: string;
+  status: "new" | "opened";
+  createdAt: string;
+}

@@ -12,6 +12,7 @@ export default function Home() {
           <div className="navLinks">
             <Link href="/auth/sign-in">Sign in</Link>
             <Link href="/onboarding">Onboarding</Link>
+            <Link href="/collaboration">Collaboration</Link>
             <Link href="/marketplace">Marketplace</Link>
             <Link href="/plugins">Plugins</Link>
             <Link href="/admin">Admin</Link>

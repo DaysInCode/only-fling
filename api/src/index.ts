@@ -1,7 +1,15 @@
 import { app } from "@azure/functions";
 import { auditLog } from "./functions/admin";
+import { adminCollaborationOverview } from "./functions/admin-collaboration";
 import { adminEarnings, adminSubscriptions, adminUsers } from "./functions/admin-ops";
 import { me, requestLink, verifyLink } from "./functions/auth";
+import {
+  collaborationAlerts,
+  collaborationNearby,
+  collaborationProfile,
+  collaborationRequest,
+  collaborationRespond,
+} from "./functions/collaboration";
 import { listConnectors } from "./functions/connectors";
 import { crmLeads } from "./functions/crm";
 import { dashboardSummary } from "./functions/dashboard";
@@ -122,4 +130,46 @@ app.http("crm-leads", {
   authLevel: "anonymous",
   route: "crm/leads",
   handler: crmLeads,
+});
+
+app.http("collaboration-profile", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "collaboration/profile",
+  handler: collaborationProfile,
+});
+
+app.http("collaboration-nearby", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "collaboration/nearby",
+  handler: collaborationNearby,
+});
+
+app.http("collaboration-request", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "collaboration/request",
+  handler: collaborationRequest,
+});
+
+app.http("collaboration-respond", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "collaboration/respond",
+  handler: collaborationRespond,
+});
+
+app.http("collaboration-alerts", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "collaboration/alerts",
+  handler: collaborationAlerts,
+});
+
+app.http("admin-collaboration-overview", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "admin/collaboration",
+  handler: adminCollaborationOverview,
 });

@@ -30,3 +30,40 @@ export const uploadSchema = z.object({
   fileName: z.string().min(1).max(200),
   contentType: z.string().min(3).max(120),
 });
+
+export const collaborationProfileSchema = z.object({
+  displayName: z.string().min(2).max(80),
+  avatarUrl: z.string().min(1).max(500),
+  bio: z.string().min(10).max(300),
+  city: z.string().min(2).max(80),
+  countryCode: z.string().length(2),
+  latitude: z.number().min(-90).max(90),
+  longitude: z.number().min(-180).max(180),
+  locationDisclosureAccepted: z.boolean(),
+  promotedHighlight: z.boolean(),
+  promotedDisclosureAccepted: z.boolean(),
+  notifyOnNearby: z.boolean(),
+  availableNow: z.boolean(),
+  contactHandle: z.string().min(2).max(120),
+  preferences: z.array(z.string().min(2).max(40)).max(8),
+  collaborationTypes: z.array(z.enum(["photo", "video", "bundle"])).min(1).max(3),
+}).superRefine((value, context) => {
+  if (value.promotedHighlight && !value.promotedDisclosureAccepted) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["promotedDisclosureAccepted"],
+      message: "Paid highlighting requires the additional location disclosure.",
+    });
+  }
+});
+
+export const collaborationRequestSchema = z.object({
+  targetUserId: z.string().min(2).max(120),
+  collaborationType: z.enum(["photo", "video", "bundle"]),
+  note: z.string().min(5).max(220),
+});
+
+export const collaborationResponseSchema = z.object({
+  requestId: z.string().min(2).max(120),
+  accept: z.boolean(),
+});

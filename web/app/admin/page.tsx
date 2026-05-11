@@ -40,6 +40,7 @@ export default function AdminPage() {
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/crm">CRM</Link>
           <Link href="/qualification">Qualification</Link>
+          <Link href="/admin/collaboration">Collaboration</Link>
         </div>
       </nav>
 

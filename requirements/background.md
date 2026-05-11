@@ -163,11 +163,52 @@ The platform should expose extension points for:
 - internal productivity improvements
 - MCP-backed operational tools
 
+## Collaboration discovery
+
+The platform now needs a **member collaboration discovery** feature for creators who want to find other members nearby to collaborate on content.
+
+### Product rules
+
+- collaboration discovery is **opt-in**
+- location sharing is **off by default**
+- paid promotion/highlighting requires an **additional disclosure** confirming that the member is comfortable sharing collaboration-area visibility
+- location exposure should default to **coarse area/city-level** rather than exact address
+- exact/direct contact details are shared only after **mutual acceptance**
+- admin and management users retain audited visibility across requests, disclosures, and matches
+
+### Collaboration flow
+
+1. member enables collaboration discovery
+2. member adds profile photo, tags, and collaboration preferences
+3. member optionally enables location sharing
+4. member optionally pays for highlight/promotion and accepts the extra disclosure
+5. nearby members appear in search results ranked by distance, availability, and preference fit
+6. if a user accepts terms, they can request collaboration contact
+7. if the other user accepts, both sides receive the approved return contact path
+8. admin can review all profiles, requests, and alerts
+
+### Nearby alerts
+
+- users can opt into nearby availability alerts
+- the system should create alerts when a matching creator is nearby and available
+- mobile should surface these alerts as notification-oriented UI now
+- full push transport can be added later via Expo/FCM/APNs provider wiring
+
+### Preference prediction
+
+Preference prediction should be conservative and transparent:
+
+- based on declared tags and prior accepted collaborations
+- never infer hidden sensitive attributes
+- used only to improve ranking/recommendation order
+- always overrideable by user controls and filters
+
 ## Current blockers
 
 1. The requested remote repository `https://github.com/DaysInCode/only-fling.git` is not currently reachable from this environment (`repository not found`).
 2. Live Stripe/MCP credentials are not available yet, so payment/provider integrations are scaffold-only for now.
 3. Real WhatsApp/Telegram onboarding flows need credentials and provider setup before activation.
+4. The pasted GitHub PAT will not be used here; remote push must be done through a valid accessible repository and the user's own credential path.
 
 ## Next implementation surfaces
 
@@ -175,5 +216,6 @@ The platform should expose extension points for:
 - admin users/subscriptions/reports/disputes API + UI
 - mini CRM API + UI
 - mobile companion dashboard
+- collaboration discovery API + UI
 - Cypress smoke coverage
 - local emulator wiring and deployment verification
