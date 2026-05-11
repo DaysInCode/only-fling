@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "KEY_VAULT_URI": "http://localhost/not-used-local",
+    "BOOTSTRAP_ADMIN_EMAIL": "admin@example.com",
+    "AUTH_SIGNING_SECRET": "replace-with-a-long-random-string",
+    "UPLOAD_CONTAINER_NAME": "media",
+    "DEFAULT_PLATFORM_FEE_PERCENT": "12",
+    "NEXT_PUBLIC_WEB_BASE_URL": "http://127.0.0.1:3000"
+  }
+}

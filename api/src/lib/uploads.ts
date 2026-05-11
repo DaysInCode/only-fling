@@ -1,0 +1,87 @@
+import {
+  BlobSASPermissions,
+  BlobServiceClient,
+  StorageSharedKeyCredential,
+  generateBlobSASQueryParameters,
+} from "@azure/storage-blob";
+import { createId } from "@paralleldrive/cuid2";
+import { config } from "./config";
+
+const developmentAccountName = "devstoreaccount1";
+const developmentAccountKey =
+  "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
+
+function parseConnectionString(connectionString: string) {
+  if (connectionString === "UseDevelopmentStorage=true") {
+    return {
+      accountName: developmentAccountName,
+      accountKey: developmentAccountKey,
+      blobEndpoint: `http://127.0.0.1:10000/${developmentAccountName}`,
+    };
+  }
+
+  const parts = Object.fromEntries(
+    connectionString
+      .split(";")
+      .map((entry) => entry.split("="))
+      .filter((entry) => entry.length === 2),
+  );
+
+  if (!parts.AccountName || !parts.AccountKey) {
+    return null;
+  }
+
+  return {
+    accountName: parts.AccountName,
+    accountKey: parts.AccountKey,
+    blobEndpoint: parts.BlobEndpoint ?? `https://${parts.AccountName}.blob.core.windows.net`,
+  };
+}
+
+export async function createUploadUrl(fileName: string, contentType: string) {
+  const safeFileName = fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
+  const blobName = `${new Date().toISOString().slice(0, 10)}/${createId()}-${safeFileName}`;
+  const connection = parseConnectionString(config.storageConnectionString);
+
+  if (!config.storageConnectionString || !connection) {
+    return {
+      mode: "memory",
+      uploadUrl: `http://127.0.0.1:7071/dev-uploads/${blobName}`,
+      blobUrl: `memory://${blobName}`,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      requiredHeaders: {
+        "x-ms-blob-type": "BlockBlob",
+        "content-type": contentType,
+      },
+    };
+  }
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(config.storageConnectionString);
+  const containerClient = blobServiceClient.getContainerClient(config.uploadContainerName);
+  await containerClient.createIfNotExists();
+
+  const expiresOn = new Date(Date.now() + 10 * 60 * 1000);
+  const sharedKeyCredential = new StorageSharedKeyCredential(connection.accountName, connection.accountKey);
+  const sas = generateBlobSASQueryParameters(
+    {
+      containerName: config.uploadContainerName,
+      blobName,
+      permissions: BlobSASPermissions.parse("cw"),
+      expiresOn,
+      contentType,
+    },
+    sharedKeyCredential,
+  ).toString();
+
+  const blobUrl = `${connection.blobEndpoint}/${config.uploadContainerName}/${blobName}`;
+  return {
+    mode: "azure",
+    uploadUrl: `${blobUrl}?${sas}`,
+    blobUrl,
+    expiresAt: expiresOn.toISOString(),
+    requiredHeaders: {
+      "x-ms-blob-type": "BlockBlob",
+      "content-type": contentType,
+    },
+  };
+}
