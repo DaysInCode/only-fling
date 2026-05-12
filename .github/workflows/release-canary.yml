@@ -18,6 +18,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    if: ${{ vars.AZURE_CLIENT_ID != '' && vars.AZURE_TENANT_ID != '' && vars.AZURE_SUBSCRIPTION_ID != '' && vars.AZURE_LOCATION != '' && vars.AZURE_RESOURCE_GROUP_PROD != '' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

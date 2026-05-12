@@ -22,6 +22,25 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run build
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Install API local runtime deps
+        working-directory: .
+        run: npm --prefix api ci
+      - name: Start API for E2E
+        working-directory: .
+        run: |
+          npm --prefix api run dev > /tmp/api-dev.log 2>&1 &
+          for i in {1..60}; do
+            if curl -fsS "http://127.0.0.1:7071/api/health" >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "API did not start in time"
+          cat /tmp/api-dev.log || true
+          exit 1
       - run: npm run test:e2e
 
   api:
