@@ -120,6 +120,7 @@ public sealed class BddApiSystem : IDisposable
             "account/settings" => _accountFunctions.AccountSettings(request),
             "account/wallet" => _accountFunctions.Wallet(request),
             "account/invoices" => _accountFunctions.Invoices(request),
+            "account/platforms/onlyfans/manage" => _accountFunctions.OnlyFansManage(request),
             "account/sessions" => _accountFunctions.AccountSessions(request),
             "account/sessions/revoke" => _accountFunctions.AccountSessionsRevoke(request),
             "account/close" => _accountFunctions.AccountClose(request),
@@ -128,9 +129,11 @@ public sealed class BddApiSystem : IDisposable
             "media/collections" => _accountFunctions.MediaCollections(request),
             "media/collections/update" => _accountFunctions.MediaCollectionUpdate(request),
             "media/collections/delete" => _accountFunctions.MediaCollectionDelete(request),
+            "media/collections/publish-ready" => _accountFunctions.MediaCollectionPublishReady(request),
             "media/uploads/intake" => _accountFunctions.MediaUploadIntake(request),
             "media/uploads/events" => _accountFunctions.MediaUploadEvents(request),
             "media/uploads/queue" => _accountFunctions.MediaUploadQueue(request),
+            "media/publishing/logs" => _accountFunctions.MediaPublishLogs(request),
             "media/items/update" => _accountFunctions.MediaItemUpdate(request),
             "media/items/delete" => _accountFunctions.MediaItemDelete(request),
             "media/items/purchase" => _accountFunctions.PurchaseMediaItem(request),
@@ -182,6 +185,8 @@ public sealed class BddApiSystem : IDisposable
             ["STRIPE_WEBHOOK_SECRET"] = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET"),
             ["PAYPAL_PAYOUT_CLIENT_ID"] = Environment.GetEnvironmentVariable("PAYPAL_PAYOUT_CLIENT_ID"),
             ["PAYPAL_PAYOUT_CLIENT_SECRET"] = Environment.GetEnvironmentVariable("PAYPAL_PAYOUT_CLIENT_SECRET"),
+            ["SYSTEM_PLATFORM_TRANSACTION_CUT"] = Environment.GetEnvironmentVariable("SYSTEM_PLATFORM_TRANSACTION_CUT"),
+            ["SYSTEM_ONLYFANS_CONVENIENCE_FEE_RATE"] = Environment.GetEnvironmentVariable("SYSTEM_ONLYFANS_CONVENIENCE_FEE_RATE"),
         };
 
         try
@@ -196,6 +201,8 @@ public sealed class BddApiSystem : IDisposable
             Environment.SetEnvironmentVariable("STRIPE_WEBHOOK_SECRET", "whsec_configured");
             Environment.SetEnvironmentVariable("PAYPAL_PAYOUT_CLIENT_ID", "paypal-client");
             Environment.SetEnvironmentVariable("PAYPAL_PAYOUT_CLIENT_SECRET", "paypal-secret");
+            Environment.SetEnvironmentVariable("SYSTEM_PLATFORM_TRANSACTION_CUT", "0.05");
+            Environment.SetEnvironmentVariable("SYSTEM_ONLYFANS_CONVENIENCE_FEE_RATE", "0.05");
             return new AppConfiguration();
         }
         finally

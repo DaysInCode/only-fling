@@ -19,7 +19,7 @@ var azurite = builder.AddContainer("azurite", "mcr.microsoft.com/azure-storage/a
     .WithHttpEndpoint(port: 10001, targetPort: 10001, name: "queue")
     .WithHttpEndpoint(port: 10002, targetPort: 10002, name: "table");
 
-var api = builder.AddNpmApp("api", @"..\..\api", "run dev")
+var api = builder.AddJavaScriptApp("api", @"..\..\api", "dev")
     .WaitFor(azurite)
     .WithEnvironment("AzureWebJobsStorage", "UseDevelopmentStorage=true")
     .WithEnvironment("NEXT_PUBLIC_WEB_BASE_URL", "http://127.0.0.1:3000")
@@ -27,14 +27,16 @@ var api = builder.AddNpmApp("api", @"..\..\api", "run dev")
     .WithEnvironment("STRIPE_PUBLISHABLE_KEY", stripePublishable)
     .WithEnvironment("STRIPE_WEBHOOK_SECRET", stripeWebhook)
     .WithEnvironment("STRIPE_CHECKOUT_BASE_URL", stripeCheckoutBaseUrl)
-    .WithHttpEndpoint(port: 7071, targetPort: 7071, name: "http")
+    .WithHttpEndpoint(port: 7071, name: "http")
     .WithExternalHttpEndpoints();
 
-builder.AddNpmApp("web", @"..\..\web", "run dev -- --hostname 127.0.0.1 --port 3000")
+builder.AddJavaScriptApp("web", @"..\..\web", "dev")
     .WaitFor(api)
     .WithEnvironment("NEXT_PUBLIC_API_BASE_URL", "http://127.0.0.1:7071/api")
     .WithEnvironment("NEXT_PUBLIC_ENVIRONMENT", "aspire")
-    .WithHttpEndpoint(port: 3000, targetPort: 3000, name: "http")
+    .WithEnvironment("HOSTNAME", "127.0.0.1")
+    .WithEnvironment("PORT", "3000")
+    .WithHttpEndpoint(port: 3000, name: "http")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

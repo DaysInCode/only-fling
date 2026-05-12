@@ -33,6 +33,10 @@ Feature: Upload intake with consent and policy capture
         "priceMinor": 1500,
         "currency": "GBP",
         "publishState": "draft",
+        "encodingProfile": {
+          "qualityProfile": "balanced",
+          "bitrateProfile": "standard"
+        },
         "consent": {
           "performerCount": 1,
           "allAdultsConfirmed": true,

@@ -239,7 +239,7 @@ public sealed partial class AppRepository
         }
         else
         {
-            if (!configuration.StripeConfigured)
+            if (!configuration.StripeConfigured || !configuration.Stripe.IsValid)
             {
                 return (null, null, wallet, null, "stripe-not-configured");
             }
@@ -740,6 +740,32 @@ public sealed partial class AppRepository
             items.Add(item);
         }
 
+        foreach (var hook in configuration.System.DerivativePolicyHooks)
+        {
+            var hookItem = new ProcessingWorkItem
+            {
+                Id = CreateId("work"),
+                OwnerId = mediaItem.OwnerId,
+                MediaItemId = mediaItem.Id,
+                QueueName = "media-derivative-policy",
+                JobType = "derivative-policy-hook",
+                PolicyHook = hook,
+                Status = "queued",
+                AttemptCount = 0,
+                CreatedAt = UtcNow(),
+                UpdatedAt = UtcNow(),
+            };
+            if (tables.Enabled)
+            {
+                await tables.UpsertAsync(ProcessingWorkTable, mediaItem.OwnerId, hookItem.Id, hookItem);
+            }
+            else
+            {
+                _memory.ProcessingWork.Insert(0, hookItem);
+            }
+            items.Add(hookItem);
+        }
+
         await RecordPluginUsageAsync("media-processing", mediaItem.OwnerId, "queue.created");
         await RecordMonitoringEventAsync("media", "media.processing.queued", "success", $"Queued {items.Count} processing jobs for {mediaItem.Id}.");
         return items.Select(Clone).ToList();
@@ -1028,6 +1054,7 @@ public sealed partial class AppRepository
                 {
                     BlobName = "2026-04/media-public-a1b2c3.jpg",
                     DownloadFileName = "image-a1b2c3.jpg",
+                    SizeBytes = 8_388_608L,
                     PublicMetadata = new Dictionary<string, string> { ["contentClass"] = "image", ["identitySafe"] = "true" },
                 };
                 image.Preview = new MediaPreviewContract
@@ -1050,6 +1077,7 @@ public sealed partial class AppRepository
                 ContentType = "video/mp4",
                 MediaType = "video",
                 AgeRating = "adult",
+                FileSizeBytes = 188_743_680L,
                 UploadStatus = "ready",
                 PublishState = "published",
                 PriceMinor = 2200,
@@ -1062,6 +1090,7 @@ public sealed partial class AppRepository
                 {
                     BlobName = "2026-05/anon-a41de0.mp4",
                     DownloadFileName = "video-a41de0.mp4",
+                    SizeBytes = 188_743_680L,
                     PublicMetadata = new Dictionary<string, string> { ["contentClass"] = "video", ["identitySafe"] = "true" },
                 },
                 Preview = new MediaPreviewContract
@@ -1093,6 +1122,7 @@ public sealed partial class AppRepository
                 {
                     BlobName = "2026-05/anon-b7c8d9.mp4",
                     DownloadFileName = "video-b7c8d9.mp4",
+                    SizeBytes = 157_286_400L,
                     PublicMetadata = new Dictionary<string, string> { ["contentClass"] = "video", ["identitySafe"] = "true" },
                 };
                 processing.Preview = new MediaPreviewContract
@@ -1109,6 +1139,7 @@ public sealed partial class AppRepository
                 {
                     BlobName = "2026-05/anon-l3f4g5.jpg",
                     DownloadFileName = "image-l3f4g5.jpg",
+                    SizeBytes = 6_291_456L,
                     PublicMetadata = new Dictionary<string, string> { ["contentClass"] = "image", ["identitySafe"] = "true" },
                 };
                 lucaPending.Preview = new MediaPreviewContract

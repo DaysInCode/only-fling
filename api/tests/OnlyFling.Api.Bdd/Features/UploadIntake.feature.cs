@@ -185,6 +185,10 @@ namespace OnlyFling.Api.Bdd.Features
   ""priceMinor"": 1500,
   ""currency"": ""GBP"",
   ""publishState"": ""draft"",
+  ""encodingProfile"": {
+    ""qualityProfile"": ""balanced"",
+    ""bitrateProfile"": ""standard""
+  },
   ""consent"": {
     ""performerCount"": 1,
     ""allAdultsConfirmed"": true,
@@ -203,87 +207,87 @@ namespace OnlyFling.Api.Bdd.Features
   }
 }", ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 54
+#line 58
     await testRunner.ThenAsync("the response status should be 201", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 55
+#line 59
     await testRunner.AndAsync("the response JSON at \"mediaItem.mediaType\" should equal \"image\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 56
+#line 60
     await testRunner.AndAsync("the response JSON at \"mediaItem.uploadStatus\" should equal \"pending\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 57
+#line 61
     await testRunner.AndAsync("the response JSON at \"mediaItem.consent.consentDocumentName\" should equal \"bdd-co" +
                         "nsent-record\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 58
+#line 62
     await testRunner.AndAsync("the response JSON at \"mediaItem.storage.publicMetadata.identitySafe\" should equal" +
                         " \"true\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 59
+#line 63
     await testRunner.AndAsync("the response JSON at \"upload.mode\" should equal \"memory\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 60
+#line 64
     await testRunner.AndAsync("the response JSON at \"upload.requiredHeaders.x-ms-blob-type\" should equal \"BlockB" +
                         "lob\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 61
+#line 65
     await testRunner.AndAsync("I save the response JSON at \"mediaItem.id\" as \"uploadMediaItemId\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 62
+#line 66
     await testRunner.AndAsync("I save the response JSON at \"mediaItem.policyArtifact.uri\" as \"policyArtifactUri\"" +
                         "", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 63
+#line 67
     await testRunner.AndAsync("the response body should not contain \"consent-image.jpg\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 65
+#line 69
     await testRunner.AndAsync("the file at \"{{policyArtifactUri}}\" should contain \"BDD captured consent proof.\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 66
+#line 70
     await testRunner.AndAsync("the file at \"{{policyArtifactUri}}\" should contain \"All adults confirmed: yes\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 67
+#line 71
     await testRunner.AndAsync("the file at \"{{policyArtifactUri}}\" should contain \"BDD policy artifact coverage." +
                         "\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 69
+#line 73
     await testRunner.WhenAsync("I send a \"GET\" request to \"/media/uploads/events?limit=10\" on the \"stable\" ring a" +
                         "s \"uploader\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 70
+#line 74
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table25 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table27 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table25.AddRow(new string[] {
+                table27.AddRow(new string[] {
                             "mediaItemId",
                             "{{uploadMediaItemId}}"});
-                table25.AddRow(new string[] {
+                table27.AddRow(new string[] {
                             "status",
                             "pending"});
-#line 71
-    await testRunner.AndAsync("the response JSON array at \"events\" should contain an object with:", ((string)(null)), table25, "And ");
+#line 75
+    await testRunner.AndAsync("the response JSON array at \"events\" should contain an object with:", ((string)(null)), table27, "And ");
 #line hidden
-#line 76
+#line 80
     await testRunner.WhenAsync("I send a \"GET\" request to \"/media/uploads/queue\" on the \"stable\" ring as \"uploade" +
                         "r\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 77
+#line 81
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table26 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table28 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table26.AddRow(new string[] {
+                table28.AddRow(new string[] {
                             "mediaItemId",
                             "{{uploadMediaItemId}}"});
-                table26.AddRow(new string[] {
+                table28.AddRow(new string[] {
                             "jobType",
                             "metadata-scrub"});
-#line 78
-    await testRunner.AndAsync("the response JSON array at \"workItems\" should contain an object with:", ((string)(null)), table26, "And ");
+#line 82
+    await testRunner.AndAsync("the response JSON array at \"workItems\" should contain an object with:", ((string)(null)), table28, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
