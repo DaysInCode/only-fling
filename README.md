@@ -11,6 +11,12 @@ This repo is scaffolded for a low-cost Azure starter platform with:
 - preview environments, canary promotion, and forward-only releases
 - local Azurite emulation with Podman
 
+## Documentation map
+
+- `requirements/background.md` - product scope, boundaries, and delivery direction
+- `documentation/userjourneys.md` - engineering-ready user/admin journey definitions, forms, security rules, audit expectations, and role access
+- `documentation/dataflows.md` - system-to-system data flows across web, mobile, API, storage, queues, analytics, payments, plugins, GitHub Actions, and admin seeding
+
 ## 1. Recommended Azure topology
 
 | Layer | Azure service | Starter role | Cost note |
@@ -110,29 +116,104 @@ This is **forward-only** because the workflow never redeploys an old artifact. A
   - synthetic `/api/health` and homepage failures
 - **Deployment freezes by automation** when post-deploy health gates fail.
 
-## 5. Local development with Podman + Azurite
+## 5. Local development with Aspire + Podman/Azurite
 
 Run:
 
 ```powershell
-podman compose -f podman-compose.yml up -d
+npm run tooling:local:aspire
 ```
 
-Then:
+This starts a local Aspire orchestration host that runs:
+
+- `api` (`func start --dotnet-isolated` via npm script)
+- `web` (`next dev` on port 3000)
+- `azurite` container dependency for blob/queue/table emulation
+
+If you prefer the previous non-Aspire path:
 
 ```powershell
-Copy-Item api\local.settings.example.json api\local.settings.json
-Copy-Item web\.env.local.example web\.env.local
-Set-Location api; npm install; Set-Location ..
-Set-Location web; npm install; Set-Location ..
+podman compose -f podman-compose.yml up -d
+npm run tooling:local
 ```
 
 Recommended local loop:
 
-1. Azurite in Podman
-2. `npm run dev` in `web`
-3. `npm run build` / `npm test` in `api`
-4. later add `func start` once API handlers expand beyond the health endpoint
+1. `Copy-Item api\local.settings.example.json api\local.settings.json` (first run only)
+2. `Copy-Item web\.env.local.example web\.env.local` (first run only)
+3. `npm run tooling:local:aspire`
+4. `npm run tooling:smoke -- -WebUrl http://127.0.0.1:3000 -ApiBaseUrl http://127.0.0.1:7071/api`
+
+### Local ops tooling
+
+PowerShell-first wrappers now live in `scripts\`:
+
+```powershell
+npm run tooling:local
+npm run tooling:local:aspire
+npm run tooling:validate
+npm run tooling:validate:aspire
+npm run tooling:smoke -- -WebUrl http://127.0.0.1:3000 -ApiBaseUrl http://127.0.0.1:7071/api
+npm run tooling:api:perf -- -BaseUrl http://127.0.0.1:7071/api -Samples 10
+npm run tooling:ga -- -ConfigOnly
+npm run tooling:gh:watch -- -Workflow release-canary.yml -FollowLatest
+```
+
+What each wrapper does:
+
+- `scripts\run-local-system.ps1`
+  - starts the local stack with Aspire AppHost when available, then falls back to Podman or local `npm` processes
+  - verifies `web` and `api` readiness
+  - optionally includes MCP if an in-repo `mcp\package.json` exists
+  - keeps services running in `Dev` mode and tears them down in `Validate` mode
+- `scripts\validate-local-system.ps1`
+  - non-destructive validation entrypoint for local or CI usage
+  - uses the same readiness + smoke flow as the dev launcher
+- `scripts\test-deployment.ps1`
+  - smoke-tests a deployed or local web URL plus `/api/health`
+  - captures simple latency stats and reports API health payload fields
+- `scripts\measure-api.ps1`
+  - repeated API probe for p50/p95 checks from the local machine
+- `scripts\test-ga-wiring.ps1`
+  - validates checked-in GA wiring and can optionally call the GA4 Measurement Protocol debug endpoint when you provide a local or CI-only API secret
+- `scripts\watch-gh-actions.ps1`
+  - wraps `gh run list`, `gh run view`, and `gh run watch` for build/deploy monitoring from a Windows PowerShell shell
+
+`mobile` is intentionally not auto-started in the shared launcher because Expo is interactive; validation mode can still typecheck it with `-IncludeMobile`.
+
+Actual Copilot CLI skills cannot be shipped inside this repo, so the practical artifact here is PowerShell tooling plus workflow reuse.
+
+### API BDD coverage
+
+Run the Reqnroll API canary/preview suite with:
+
+```powershell
+npm run test:api:bdd
+```
+
+This keeps the existing Cypress coverage intact while adding .NET-side executable coverage for auth, uploads, media contracts, payouts, guarded modules, preview enrollment, and cross-account defenses.
+
+### Account/media UI coverage
+
+The web app now includes:
+
+- account profile summary and profile editing
+- Slack/Telegram-style settings sections
+- dedicated security/devices and close-account danger zone
+- media collections, upload intake, and folder markdown policy artifacts
+- per-account earnings graph plus payout requests/history
+- per-account audit trail
+- identity verification readiness/checklist/status only
+
+### Containerized Cypress path
+
+Run:
+
+```powershell
+npm run test:e2e:container
+```
+
+This builds the static-export web container, starts the supporting API + Azurite stack, runs Cypress against the web container, and tears the stack down.
 
 ## 6. Secrets and configuration
 
@@ -158,6 +239,8 @@ Recommended local loop:
 - secret values stay in Key Vault
 - non-secret environment wiring stays in GitHub variables and Bicep params
 - local dev uses checked-in `*.example` files only
+- Aspire AppHost forwards Stripe provider scaffolding from environment (`STRIPE_SECRET_KEY`, `STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_CHECKOUT_BASE_URL`) without committing secret values
+- GA4 Measurement Protocol API secrets stay out of the repo; use local environment variables or CI secrets when running `scripts\test-ga-wiring.ps1` against the debug endpoint
 
 ## 7. Minimum files scaffolded now
 
@@ -169,7 +252,15 @@ Recommended local loop:
 - `.github/workflows/preview.yml`
 - `.github/workflows/release-canary.yml`
 - `.github/workflows/infra.yml`
+- `scripts/run-local-system.ps1`
+- `scripts/validate-local-system.ps1`
+- `scripts/test-deployment.ps1`
+- `scripts/measure-api.ps1`
+- `scripts/test-ga-wiring.ps1`
+- `scripts/watch-gh-actions.ps1`
 - `podman-compose.yml`
+- `aspire/OnlyFling.AppHost/OnlyFling.AppHost.csproj`
+- `aspire/OnlyFling.ServiceDefaults/OnlyFling.ServiceDefaults.csproj`
 - `api/host.json`
 - `api/tsconfig.json`
 - `api/src/index.ts`
@@ -177,10 +268,17 @@ Recommended local loop:
 - `api/local.settings.example.json`
 - `web/.env.local.example`
 
-## Immediate next scaffold step
+## 8. Architecture implications for the next requirement slice
+
+- The current web app is **client-heavy Next.js** with a thin fetch wrapper and hand-authored contracts. Localization should therefore be introduced as **shared dictionaries and API-supplied locale/policy metadata**, not page-by-page forks.
+- Web and mobile should converge on **shared read/write contracts** for onboarding, browse feed, credits, invoices, challenges, payouts, modules, and device/session management.
+- Media processing, purchase settlement, invoice creation, challenge scoring, payout execution, and admin seeding should remain **queue-backed, idempotent, and replayable** rather than synchronous request chains.
+- Adult-platform-related work stays limited to **eligibility, consent, age-gate, invoicing, moderation, and plugin scaffolding**. Unsafe or service-oriented flows are intentionally out of scope.
+
+## 9. Immediate next scaffold step
 
 1. Deploy `infra/parameters/dev.bicepparam`
 2. point `release-canary.yml` at the production resource group
 3. add real API handlers behind queue-based workflows
 4. add signed upload URLs for image ingestion
-5. wire synthetic tests into post-deploy promotion gates
+5. synthetic smoke checks are now wired into preview and release validation gates via `scripts\test-deployment.ps1`

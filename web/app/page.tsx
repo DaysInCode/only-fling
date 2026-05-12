@@ -11,12 +11,10 @@ export default function Home() {
           <div className="brand">OnlyFling Starter</div>
           <div className="navLinks">
             <Link href="/auth/sign-in">Sign in</Link>
-            <Link href="/onboarding">Onboarding</Link>
-            <Link href="/collaboration">Collaboration</Link>
-            <Link href="/community">Community</Link>
-            <Link href="/marketplace">Marketplace</Link>
-            <Link href="/plugins">Plugins</Link>
-            <Link href="/admin">Admin</Link>
+            <Link href="/account">Account</Link>
+            <Link href="/media">Media</Link>
+            <Link href="/earnings">Earnings</Link>
+            <Link href="/dashboard">Dashboard</Link>
           </div>
         </nav>
 
@@ -31,10 +29,10 @@ export default function Home() {
             </p>
             <div className="heroActions">
               <Link className="button" href="/auth/sign-in">
-                Start sign-in
+                Start account setup
               </Link>
-              <Link className="buttonSecondary" href="/onboarding">
-                Reach first upload in under 5 minutes
+              <Link className="buttonSecondary" href="/media">
+                Open media workspace
               </Link>
             </div>
           </div>
@@ -43,7 +41,7 @@ export default function Home() {
             <div className="panel">
               <div className="label">Activation loop</div>
               <div className="kpi">5 min</div>
-              <p className="muted">Terms → profile → upload token → first item draft → invite link.</p>
+              <p className="muted">Auth → profile → settings → upload consent → first priced collection.</p>
             </div>
             <div className="panel">
               <div className="label">Growth strategy</div>
@@ -93,15 +91,16 @@ export default function Home() {
           <div className="panel">
             <div className="label">What ships in this starter</div>
             <ul className="list">
-              <li>Passwordless sign-in and session token bootstrap</li>
-              <li>Five-click onboarding flow with terms and marketplace policy acceptance</li>
-              <li>Gamified creator dashboard with ranks, rewards, and referral positioning</li>
-              <li>Plugin catalogue with MCP-ready connector metadata</li>
-              <li>Community integration requests and demand signals</li>
-              <li>Secure upload URL issuance for Azure Blob storage</li>
-              <li>Admin-only audit trail and moderation queue endpoints</li>
-            </ul>
-          </div>
+                <li>Passwordless sign-in and session token bootstrap</li>
+                <li>Slack-style account settings with dedicated security and devices</li>
+                <li>Secure media collections, consent capture, and markdown policy artifacts</li>
+                <li>Earnings summary, trend graph, and payout requests</li>
+                <li>Per-account audit trail with close-account protection</li>
+                <li>Identity readiness checklist only, without external verification integration</li>
+                <li>Secure upload URL issuance for Azure Blob storage</li>
+                <li>Admin-only audit trail and moderation queue endpoints</li>
+              </ul>
+            </div>
           <ConnectorPreview />
         </section>
 

@@ -41,8 +41,12 @@ export async function verifyLink(request: HttpRequest) {
   }
 
   const user = await getOrCreateUser(parsed.data.email);
-  const session = await createSession(user);
-  await appendAuditEvent(user.id, "auth.session.created", "session", session.token, "Issued API session token.");
+  const session = await createSession(user, {
+    deviceLabel: parsed.data.deviceName,
+    userAgent: request.headers.get("user-agent") ?? undefined,
+    ipAddress: request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? undefined,
+  });
+  await appendAuditEvent(user.id, "auth.session.created", "session", session.id, "Issued API session token.");
 
   return jsonResponse({
     token: session.token,
@@ -65,6 +69,7 @@ export async function me(request: HttpRequest) {
       email: session.email,
       role: session.role,
       userId: session.userId,
+      sessionId: session.id,
     },
   });
 }

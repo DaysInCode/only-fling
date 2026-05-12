@@ -2,312 +2,113 @@
 
 ## Current delivery direction
 
-The implementation is being shaped as a **safe, compliant, adult-only creator operations and marketplace platform** rather than a system for sexual services or non-consensual growth tactics. The codebase is being built around:
+OnlyFling is a **safe, compliant, adult-only creator operations and marketplace platform**. Unsafe service solicitation and non-consensual growth tactics are out of scope.
 
-- **Next.js** web experience
+Primary stack:
+
+- **Next.js** web
 - **Azure Functions** API
-- **Expo** mobile companion for iOS and Android
-- **Azure Storage** for private media, queue-first workflows, and lightweight metadata
-- **GitHub Actions** automation with Azure deployment
-- **MCP-ready connector architecture** for future Copilot/AI and third-party integrations
+- **Expo** mobile companion
+- **Azure Storage** private media + queue-first processing
+- **GitHub Actions** automation + deployment
+- **MCP-ready connector/plugin architecture**
 
-## Active product scope
+## Requirement baseline (cross-reference source for `documentation/userjourneys.md`)
 
-### 1. Core user journeys
+### BG-01 Platform and compliance boundaries
 
-1. Passwordless sign-in
-2. Five-click onboarding
-3. First secure upload within 5 minutes of policy acceptance
-4. First storefront item creation
-5. Invite/referral activation
-6. Ongoing creator ranking and rewards
+1. UK/EU-hostable architecture with GDPR-aware consent, retention, and auditability.
+2. No cross-account data access.
+3. Admin break-glass access must be audited and time-bound.
+4. Private media storage only; minimal public data exposure.
+5. Adult-rated scope limited to consent, eligibility, age gate, invoicing labels, moderation, and plugin scaffolding.
 
-### 2. Account model
+### BG-02 Account and identity
 
-- **Free account**
-  - sign-up
-  - profile
-  - uploads
-  - one storefront
-  - one invite flow
-- **Paid account**
-  - expanded analytics
-  - connector/plugin installs
-  - stronger rewards/rank multipliers
-  - premium moderation and reporting surfaces
-- **Admin account**
-  - full audited visibility
-  - user management
-  - staff management
-  - subscriptions
-  - dispute handling
-  - accountant reporting
+1. Passwordless sign-in with named devices and session revocation.
+2. Localized onboarding with versioned policy acceptance (terms, privacy, marketplace).
+3. Profile/settings with explicit privacy and discoverability controls.
+4. Account closure remains soft-state with explicit acknowledgement and session revocation.
 
-### 3. Growth model
+### BG-03 Media and publishing
 
-Temu-inspired ideas being applied only where appropriate:
+1. Upload intake must capture consent + policy artifact before transfer completes.
+2. Qualification pipeline states: `accepted`, `needs-review`, `rejected`.
+3. Collection/folder management must support soft delete with audit.
+4. Browse/publish contracts must be API-first and shared by web/mobile.
 
-- mobile-first UX
-- shorter flows
-- rewards and rank progression
-- referral loops
-- social proof and momentum cues
-- rapid iteration based on funnel analytics
+### BG-04 Commerce and finance
 
-### 4. Marketplace
+1. Credit purchase flow with immutable ledger semantics.
+2. Adult-rated purchases require eligibility/age-gate checks.
+3. Invoice generation with controlled entertainment-label taxonomy.
+4. Payouts require hold checks, finance controls, and audit trail.
 
-- digital items
-- physical items
-- service request listings
-- platform commission
-- future Stripe checkout adapter
-- future subscription billing
+### BG-05 Growth, collaboration, and community
 
-### 5. Connectors and external channels
+1. Referral/invite attribution with capped reward windows.
+2. Challenge/ranking support with anti-fraud and public-redaction controls.
+3. Collaboration discovery is opt-in, coarse-location first, mutual contact release only.
+4. Community demand requests and roadmap signal aggregation.
+5. Affiliate prompts and rewards must be clearly capped/disclosed.
 
-Connector templates are being prepared for:
+### BG-06 Plugins, connectors, and rollout controls
 
-- Stripe
-- Instagram
-- TikTok
-- OnlyFans
-- Pornhub
-- WhatsApp onboarding/notifications
-- Telegram onboarding/notifications
+1. Connector/module catalogs are manifest-driven.
+2. Preview/canary behavior requires enrollment + channel/ring gates.
+3. Connector templates for external channels remain template/scaffold until compliant rollout.
+4. Plugin behavior may alter purchase/publish behavior only through allowlisted server-side config.
 
-These are treated as **connector manifests/templates** first, with real credentials and operational rollout deferred until compliant platform approval, API access, and moderation policy are in place.
+### BG-07 Admin and operational tooling
 
-## Upload analysis and qualification process
+1. Admin tools include users, roles/staff, subscriptions, disputes, moderation, finance reports, audit trail, and compliance visibility.
+2. Admin filesystem seeding/import must run from allowlisted paths with manifest checksums and per-file status.
+3. Service principals have least-privilege import/ops rights.
 
-Uploads need a formal qualification pipeline before publication:
+### BG-08 Explicit access boundary (newly clarified)
 
-1. **Upload requested**
-   - API issues private upload URL
-   - asset linked to the signed-in account only
-2. **Initial validation**
-   - file type
-   - file size
-   - upload completeness
-   - ownership/account binding
-3. **Qualification rules**
-   - terms accepted
-   - privacy accepted
-   - marketplace policy accepted
-   - adult-only declaration
-   - profile completeness
-   - moderation status
-4. **Analysis result**
-   - accepted
-   - needs-review
-   - rejected
-5. **Audit trail**
-   - result logged
-   - reviewer/system source recorded
+1. **Users (guest/member/creator) cannot access admin events or admin-only event streams.**
+2. Admin event endpoints are staff-only and audited.
+3. User-visible audit feeds must contain only subject-account events.
 
-## Admin tool requirements
+### BG-09 Publishing governance flow (newly clarified)
 
-The admin tool must include:
+Publishing must pass a governance gate:
 
-- users list
-- role and staff management
-- subscriptions view
-- disputes queue
-- moderation queue
-- accountant-friendly earnings reports
-- audit trail
-- connector installation status
-- compliance request visibility
+1. Creator submits folder + media metadata in `draft`.
+2. Folder approval gate validates:
+   - ownership
+   - consent artifact presence
+   - policy artifact completeness
+   - qualification state and moderation status
+3. Metadata-driven publish fan-out worker reads approved metadata package and executes destination-specific publish tasks.
+4. External platform/account publishing uses **admin-managed platform accounts** only (no user-supplied direct credentials in this slice).
+5. Enabled plugins may add allowlisted publish transforms/steps, but cannot bypass approval gate or policy checks.
+6. Commerce fan-out must apply platform convenience fee/cut rules and record gross, fee, net fields in audit/ledger projections.
 
-## CRM direction
+## Architecture guardrails
 
-The platform needs a **mini CRM** that is AI-ready and supports:
-
-- opt-in leads
-- referral-origin tracking
-- WhatsApp / Telegram preferred contact channel flags
-- lead stage
-- invite status
-- owner assignment
-- notes
-- AI scoring hooks
-
-### Important boundary
-
-The CRM can support:
-
-- imported contacts with consent
-- manually researched public business leads
-- referral-driven growth
-- creator-provided invite lists
-
-The CRM **must not rely on scraping private or platform-restricted personal data** or bulk unsolicited outreach flows that would create privacy, spam, or compliance risk.
-
-## Compliance requirements
-
-- UK/EU-hostable
-- GDPR-aware consent and retention model
-- PIPL considered: either dedicated regional deployment later or China blocked until localized controls exist
-- no cross-account data access
-- admin break-glass access must be audited
-- private media storage
-- minimal public data exposure
+- Localization via shared dictionaries + versioned legal copy, not route duplication.
+- Web/mobile consume shared typed API read models.
+- Queue-backed, idempotent processing for uploads, purchases, invoices, scoring, payouts, plugins, and seeding.
+- Sensitive data redaction by default in non-finance/non-admin surfaces.
 
 ## AI and Copilot direction
 
-The platform should expose extension points for:
+Extension points should support qualification scoring, moderation assistance, CRM prioritization, connector operations, and MCP-backed operational tooling.
 
-- qualification scoring
-- moderation assistance
-- CRM prioritization
-- connector operations
-- internal productivity improvements
-- MCP-backed operational tools
+## Implementation notes and blockers
 
-## Collaboration discovery
+1. Remote `https://github.com/DaysInCode/only-fling.git` may be unreachable from some environments.
+2. Live Stripe/MCP/provider credentials are currently scaffold-only.
+3. Real WhatsApp/Telegram onboarding requires provider credentials before activation.
 
-The platform now needs a **member collaboration discovery** feature for creators who want to find other members nearby to collaborate on content.
+## Journeys cross-reference anchor
 
-### Product rules
+`documentation/userjourneys.md` defines atomic user/staff flows and maps each flow to:
 
-- collaboration discovery is **opt-in**
-- location sharing is **off by default**
-- paid promotion/highlighting requires an **additional disclosure** confirming that the member is comfortable sharing collaboration-area visibility
-- location exposure should default to **coarse area/city-level** rather than exact address
-- exact/direct contact details are shared only after **mutual acceptance**
-- admin and management users retain audited visibility across requests, disclosures, and matches
-
-### Collaboration flow
-
-1. member enables collaboration discovery
-2. member adds profile photo, tags, and collaboration preferences
-3. member optionally enables location sharing
-4. member optionally pays for highlight/promotion and accepts the extra disclosure
-5. nearby members appear in search results ranked by distance, availability, and preference fit
-6. if a user accepts terms, they can request collaboration contact
-7. if the other user accepts, both sides receive the approved return contact path
-8. admin can review all profiles, requests, and alerts
-
-### Nearby alerts
-
-- users can opt into nearby availability alerts
-- the system should create alerts when a matching creator is nearby and available
-- mobile should surface these alerts as notification-oriented UI now
-- full push transport can be added later via Expo/FCM/APNs provider wiring
-
-### Preference prediction
-
-Preference prediction should be conservative and transparent:
-
-- based on declared tags and prior accepted collaborations
-- never infer hidden sensitive attributes
-- used only to improve ranking/recommendation order
-- always overrideable by user controls and filters
-
-## Community-led growth
-
-The platform should also support a **community demand loop** so users can request the next platforms and integrations to support.
-
-### Community/platform request flow
-
-1. a creator or member opens the community/request area
-2. they submit a requested platform or integration
-3. requests are ranked by visible demand signals
-4. admin uses those signals to prioritise roadmap delivery
-
-### Lucrative community enhancements
-
-- affiliate launch links after first earnings milestone
-- capped referral rewards for first sales or first days, whichever comes first
-- community bounties for requested integrations
-- creator streak rewards tied to uploads, sales, and referrals
-- roadmap voting and transparent status for requested platforms
-
-These should feel **friendly, momentum-driven, and competitive without becoming deceptive**.
-
-## Affiliate launch flow
-
-After a creator gets early earnings, the platform should surface a simple affiliate prompt such as:
-
-- "Start earning with me"
-- "Click here to start earning"
-
-The affiliate reward should be **capped**:
-
-- valid for the first number of sales or first number of days
-- whichever comes first
-- clearly disclosed in the UI
-
-## Member request outlet
-
-Creators need a structured request outlet where members can ask for:
-
-- content collaborations
-- custom requests
-- video bundles
-
-The target creator can:
-
-- accept the request
-- make a visible promise to fulfill
-- mark it fulfilled
-- dispute it
-
-## Collab studio and 60/40 split
-
-The platform also needs a **Collab Studio** flow for joint items and remote sessions.
-
-### Rules
-
-- remote-stream and upload-bundle modes
-- fixed 60/40 creator split
-- gross, fee, net, and both creator shares shown clearly
-- partner confirmation before go-live
-- payout approval states visible
-- settlement audit trail retained
-
-### Minimum states
-
-- draft
-- pending partner confirm
-- both confirmed
-- live
-- payout initiated
-- payout approved creator A
-- payout approved creator B
-- settled
-- disputed
-
-### Audit model
-
-The platform must record at least:
-
-- split initiated
-- split confirmed
-- session started
-- session ended
-- item published
-- payout initiated
-- payout approved
-- payout settled
-- dispute opened
-
-## Current blockers
-
-1. The requested remote repository `https://github.com/DaysInCode/only-fling.git` is not currently reachable from this environment (`repository not found`).
-2. Live Stripe/MCP credentials are not available yet, so payment/provider integrations are scaffold-only for now.
-3. Real WhatsApp/Telegram onboarding flows need credentials and provider setup before activation.
-4. The pasted GitHub PAT will not be used here; remote push must be done through a valid accessible repository and the user's own credential path.
-
-## Next implementation surfaces
-
-- qualification API + UI
-- admin users/subscriptions/reports/disputes API + UI
-- mini CRM API + UI
-- mobile companion dashboard
-- collaboration discovery API + UI
-- community platform-request API + UI
-- affiliate launch API + UI
-- member request inbox API + UI
-- collab studio and settlement API + UI
-- Cypress smoke coverage
-- local emulator wiring and deployment verification
+- requirement references (BG-xx),
+- data/validation and security constraints,
+- audit events,
+- automation coverage (BDD feature links),
+- BA/architect/developer/tester acceptance checkpoints.

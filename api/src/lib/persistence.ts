@@ -67,7 +67,38 @@ const memory = (() => {
       [normalizeKey(creatorOne.email), creatorOne],
       [normalizeKey(creatorTwo.email), creatorTwo],
     ]),
-    sessions: new Map<string, SessionRecord>(),
+    sessions: new Map<string, SessionRecord>([
+      [
+        "token-anna-browser",
+        {
+          id: "session-anna-browser",
+          token: "token-anna-browser",
+          userId: creatorOne.id,
+          email: creatorOne.email,
+          role: creatorOne.role,
+          createdAt: now,
+          lastSeenAt: now,
+          expiresAt: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+          deviceLabel: "Anna Chrome",
+          userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X)",
+        },
+      ],
+      [
+        "token-luca-tablet",
+        {
+          id: "session-luca-tablet",
+          token: "token-luca-tablet",
+          userId: creatorTwo.id,
+          email: creatorTwo.email,
+          role: creatorTwo.role,
+          createdAt: now,
+          lastSeenAt: now,
+          expiresAt: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+          deviceLabel: "Luca iPad",
+          userAgent: "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X)",
+        },
+      ],
+    ]),
     challenges: new Map<string, AuthChallenge[]>(),
     onboarding: new Map<string, OnboardingRecord>(),
     items: new Map<string, CatalogItem>([
@@ -469,13 +500,61 @@ export async function getOrCreateUser(email: string) {
   );
 }
 
-export async function createSession(user: UserProfile) {
+export async function updateUserDisplayName(userId: string, email: string, displayName: string) {
+  const normalizedEmail = normalizeKey(email);
+
+  return withFallback(
+    async () => {
+      const existing = await getRecord<UserProfile>("users", normalizedEmail, "profile");
+      if (!existing || existing.id !== userId) {
+        return null;
+      }
+
+      const updated: UserProfile = {
+        ...existing,
+        displayName,
+      };
+      await upsertRecord("users", normalizedEmail, "profile", updated);
+      return updated;
+    },
+    () => {
+      const existing = memory.users.get(userId);
+      if (!existing || normalizeKey(existing.email) !== normalizedEmail) {
+        return null;
+      }
+
+      const updated: UserProfile = {
+        ...existing,
+        displayName,
+      };
+      memory.users.set(userId, updated);
+      memory.usersByEmail.set(normalizedEmail, updated);
+      return updated;
+    },
+  );
+}
+
+export async function createSession(
+  user: UserProfile,
+  options?: {
+    deviceLabel?: string;
+    userAgent?: string;
+    ipAddress?: string;
+  },
+) {
+  const now = new Date().toISOString();
   const session: SessionRecord = {
+    id: `session-${createId()}`,
     token: createId(),
     userId: user.id,
     email: user.email,
     role: user.role,
+    createdAt: now,
+    lastSeenAt: now,
     expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    deviceLabel: options?.deviceLabel,
+    userAgent: options?.userAgent,
+    ipAddress: options?.ipAddress,
   };
 
   return withFallback(
@@ -494,6 +573,69 @@ export async function getSession(token: string) {
   return withFallback(
     async () => getRecord<SessionRecord>("sessions", "session", token),
     () => memory.sessions.get(token) ?? null,
+  );
+}
+
+export async function touchSession(token: string) {
+  const existing = await getSession(token);
+  if (!existing || existing.revokedAt) {
+    return null;
+  }
+
+  const updated: SessionRecord = {
+    ...existing,
+    lastSeenAt: new Date().toISOString(),
+  };
+
+  return withFallback(
+    async () => {
+      await upsertRecord("sessions", "session", token, updated);
+      return updated;
+    },
+    () => {
+      memory.sessions.set(token, updated);
+      return updated;
+    },
+  );
+}
+
+export async function listUserSessions(userId: string) {
+  const now = new Date().toISOString();
+  return withFallback(
+    async () => {
+      const sessions = await listRecords<SessionRecord>("sessions", "session");
+      return sessions
+        .filter((entry) => entry.userId === userId && !entry.revokedAt && entry.expiresAt > now)
+        .sort((left, right) => right.lastSeenAt.localeCompare(left.lastSeenAt));
+    },
+    () =>
+      Array.from(memory.sessions.values())
+        .filter((entry) => entry.userId === userId && !entry.revokedAt && entry.expiresAt > now)
+        .sort((left, right) => right.lastSeenAt.localeCompare(left.lastSeenAt)),
+  );
+}
+
+export async function revokeUserSession(userId: string, sessionId: string) {
+  const sessions = await listUserSessions(userId);
+  const session = sessions.find((entry) => entry.id === sessionId);
+  if (!session || session.userId !== userId) {
+    return null;
+  }
+
+  const updated: SessionRecord = {
+    ...session,
+    revokedAt: new Date().toISOString(),
+  };
+
+  return withFallback(
+    async () => {
+      await upsertRecord("sessions", "session", session.token, updated);
+      return updated;
+    },
+    () => {
+      memory.sessions.set(session.token, updated);
+      return updated;
+    },
   );
 }
 
@@ -550,10 +692,18 @@ export async function createItem(
   );
 }
 
-export async function appendAuditEvent(actorId: string, action: string, targetType: string, targetId: string, details: string) {
+export async function appendAuditEvent(
+  actorId: string,
+  action: string,
+  targetType: string,
+  targetId: string,
+  details: string,
+  accountId = actorId,
+) {
   const event: AuditEvent = {
     id: `audit-${createId()}`,
     actorId,
+    accountId,
     action,
     targetType,
     targetId,
@@ -581,6 +731,11 @@ export async function listAuditEvents() {
     },
     () => memory.auditLog,
   );
+}
+
+export async function listAuditEventsForAccount(accountId: string) {
+  const events: AuditEvent[] = await listAuditEvents();
+  return events.filter((event) => (event.accountId ?? event.actorId) === accountId);
 }
 
 export async function listModerationCases(): Promise<ModerationCase[]> {
@@ -621,7 +776,13 @@ export async function requireRole(session: SessionRecord | null, allowed: Role[]
 }
 
 export async function listUsers() {
-  return Array.from(memory.users.values());
+  return withFallback(
+    async () => {
+      const users = await listRecords<UserProfile>("users");
+      return users.length ? users : Array.from(memory.users.values());
+    },
+    () => Array.from(memory.users.values()),
+  );
 }
 
 export async function listSubscriptions(): Promise<SubscriptionSummary[]> {

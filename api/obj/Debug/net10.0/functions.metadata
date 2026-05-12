@@ -1,0 +1,1411 @@
+[
+  {
+    "name": "AccountProfile",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.AccountProfile",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "account/profile",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountSettings",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.AccountSettings",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "account/settings",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountSessions",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.AccountSessions",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "account/sessions",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountSessionsRevoke",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.AccountSessionsRevoke",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "account/sessions/revoke",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountClose",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.AccountClose",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "account/close",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountAudit",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.AccountAudit",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "account/audit",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "VerificationReadiness",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.VerificationReadiness",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "account/verification-readiness",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaCollections",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaCollections",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "media/collections",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaCollectionUpdate",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaCollectionUpdate",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "media/collections/update",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaCollectionDelete",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaCollectionDelete",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "media/collections/delete",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaCollectionItems",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaCollectionItems",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "media/collections/{collectionId}/items",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaUploadIntake",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaUploadIntake",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "media/uploads/intake",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaUploadEvents",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaUploadEvents",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "media/uploads/events",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaUploadQueue",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaUploadQueue",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "media/uploads/queue",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaItemUpdate",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaItemUpdate",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "media/items/update",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaItemDelete",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.MediaItemDelete",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "media/items/delete",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountEarningsSummary",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.EarningsSummary",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "earnings/summary",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountPayouts",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.Payouts",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "payouts",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountPayoutRequest",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.PayoutRequest",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "payouts/request",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountWallet",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.Wallet",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "account/wallet",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AccountInvoices",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.Invoices",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "account/invoices",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MediaItemPurchase",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AccountFunctions.PurchaseMediaItem",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "media/items/purchase",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AdminRoutes",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.AdminFunctions.AdminRoutes",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "{segment:regex(^admin$)}/{*path}",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "CollaborationProfile",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.CollaborationProfile",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "collaboration/profile",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "CollaborationNearby",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.CollaborationNearby",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "collaboration/nearby",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "CollaborationRequest",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.CollaborationRequest",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "collaboration/request",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "CollaborationRespond",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.CollaborationRespond",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "collaboration/respond",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "CollaborationAlerts",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.CollaborationAlerts",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "collaboration/alerts",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "PlatformRequests",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.PlatformRequests",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "platform-requests",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AffiliateLaunch",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.AffiliateLaunch",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "affiliate/launch",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MemberRequests",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.MemberRequests",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "member-requests",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "MemberRequestAction",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.MemberRequestAction",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "member-requests/action",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "StudioSessions",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.StudioSessions",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "studio/sessions",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "StudioSessionAction",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.CollaborationFunctions.StudioSessionAction",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "studio/sessions/action",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "Health",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.Health",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "health",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "Connectors",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.Connectors",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "connectors",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "ConnectorsModules",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.ConnectorModules",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "connectors/modules",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "ActivePlugins",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.ActivePlugins",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "plugins/active",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "ConnectorsPreviewEnroll",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.PreviewEnroll",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "connectors/preview/enroll",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AuthRequestLink",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.RequestLink",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "auth/request-link",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "AuthVerify",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.VerifyLink",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "auth/verify",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "Me",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.Me",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "me",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "OnboardingComplete",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.CompleteOnboarding",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "onboarding/complete",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "Items",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.Items",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "post",
+          "options"
+        ],
+        "route": "items",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "UploadsPresign",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.PresignUpload",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "post",
+          "options"
+        ],
+        "route": "uploads/presign",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "DashboardSummary",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.DashboardSummary",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "dashboard/summary",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "ModerationQueue",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.ModerationQueue",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "moderation/queue",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "QualificationRules",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.Qualification",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "qualification/rules",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "CrmLeads",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.CrmLeads",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "get",
+          "options"
+        ],
+        "route": "crm/leads",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  },
+  {
+    "name": "DevUploads",
+    "scriptFile": "OnlyFling.Api.dll",
+    "entryPoint": "OnlyFling.Api.Functions.PublicFunctions.DevUploads",
+    "language": "dotnet-isolated",
+    "properties": {
+      "IsCodeless": false
+    },
+    "bindings": [
+      {
+        "name": "request",
+        "direction": "In",
+        "type": "httpTrigger",
+        "authLevel": "Anonymous",
+        "methods": [
+          "put",
+          "options"
+        ],
+        "route": "dev-uploads/{*blobPath}",
+        "properties": {}
+      },
+      {
+        "name": "$return",
+        "type": "http",
+        "direction": "Out"
+      }
+    ]
+  }
+]

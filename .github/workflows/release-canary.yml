@@ -23,6 +23,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
       - uses: azure/login@v2
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
@@ -86,11 +89,9 @@ jobs:
       - name: Build and package API
         shell: bash
         run: |
-          cd api
-          npm ci
-          npm run build
-          npm prune --omit=dev
-          zip -r ../api-release.zip dist host.json package.json node_modules
+          dotnet publish api/OnlyFling.Api.csproj -c Release -o api-publish
+          cd api-publish
+          zip -r ../api-release.zip .
       - name: Publish API ring
         shell: bash
         run: |
@@ -98,10 +99,14 @@ jobs:
             --resource-group "$RESOURCE_GROUP" \
             --name "$TARGET_FUNCTION" \
             --src api-release.zip
-      - name: Smoke test target ring
+      - name: Resolve target ring endpoints
         shell: bash
         run: |
-          curl -fsS "https://${TARGET_FUNCTION}.azurewebsites.net/api/health"
+          echo "TARGET_WEB_URL=$(az storage account show --resource-group "$RESOURCE_GROUP" --name "$TARGET_WEB_STORAGE" --query "primaryEndpoints.web" -o tsv)" >> "$GITHUB_ENV"
+          echo "TARGET_API_URL=https://${TARGET_FUNCTION}.azurewebsites.net/api" >> "$GITHUB_ENV"
+      - name: Smoke test target ring
+        shell: pwsh
+        run: .\scripts\test-deployment.ps1 -WebUrl $env:TARGET_WEB_URL -ApiBaseUrl $env:TARGET_API_URL -ApiSampleCount 5
       - name: Progressive canary promotion
         shell: bash
         run: |
@@ -121,6 +126,5 @@ jobs:
             az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name api-origins --origin-name "$STABLE_API_ORIGIN" --weight "$stable"
             az afd origin update --resource-group "$RESOURCE_GROUP" --profile-name "$FRONTDOOR_PROFILE" --origin-group-name api-origins --origin-name "$TARGET_API_ORIGIN" --weight "$target"
             sleep 90
-            curl -fsS "https://${FRONTDOOR_HOST}/"
-            curl -fsS "https://${FRONTDOOR_HOST}/api/health"
+            pwsh -File ./scripts/test-deployment.ps1 -WebUrl "https://${FRONTDOOR_HOST}" -ApiBaseUrl "https://${FRONTDOOR_HOST}/api" -ApiSampleCount 3
           done

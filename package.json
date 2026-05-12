@@ -6,10 +6,26 @@
   "scripts": {
     "dev:web": "npm --prefix web run dev",
     "dev:api": "npm --prefix api run dev",
+    "dev:aspire": "dotnet run --project .\\aspire\\OnlyFling.AppHost\\OnlyFling.AppHost.csproj",
     "dev:mobile": "npm --prefix mobile run start",
+    "dev:mcp": "npm --prefix mcp run dev",
     "build:web": "npm --prefix web run build",
     "build:api": "npm --prefix api run build",
+    "build:mcp": "npm --prefix mcp run build",
     "lint:web": "npm --prefix web run lint",
-    "test:e2e": "npm --prefix web run test:e2e"
+    "test:web:components": "npm --prefix web run test:components",
+    "typecheck:mobile": "npm --prefix mobile run typecheck",
+    "test:e2e": "npm --prefix web run test:e2e",
+    "test:e2e:container": "powershell -ExecutionPolicy Bypass -File web\\scripts\\run-container-cypress.ps1",
+    "test:api": "npm --prefix api run test",
+    "test:api:bdd": "npm --prefix api run test:bdd",
+    "tooling:local": "powershell -ExecutionPolicy Bypass -File scripts\\run-local-system.ps1",
+    "tooling:local:aspire": "powershell -ExecutionPolicy Bypass -File scripts\\run-local-system.ps1 -Runtime Aspire",
+    "tooling:validate": "powershell -ExecutionPolicy Bypass -File scripts\\validate-local-system.ps1",
+    "tooling:validate:aspire": "powershell -ExecutionPolicy Bypass -File scripts\\validate-local-system.ps1 -Runtime Aspire",
+    "tooling:smoke": "powershell -ExecutionPolicy Bypass -File scripts\\test-deployment.ps1",
+    "tooling:ga": "powershell -ExecutionPolicy Bypass -File scripts\\test-ga-wiring.ps1",
+    "tooling:api:perf": "powershell -ExecutionPolicy Bypass -File scripts\\measure-api.ps1",
+    "tooling:gh:watch": "powershell -ExecutionPolicy Bypass -File scripts\\watch-gh-actions.ps1"
   }
 }

@@ -1,0 +1,343 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "OnlyFling.Api/1.0.0": {
+        "dependencies": {
+          "Azure.Data.Tables": "12.10.0",
+          "Azure.Storage.Blobs": "12.25.1",
+          "Microsoft.Azure.Functions.Worker": "2.50.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Http": "3.2.0"
+        },
+        "runtime": {
+          "OnlyFling.Api.dll": {}
+        }
+      },
+      "Azure.Core/1.44.1": {
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
+          "System.ClientModel": "1.1.0",
+          "System.Memory.Data": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/Azure.Core.dll": {
+            "assemblyVersion": "1.44.1.0",
+            "fileVersion": "1.4400.124.50905"
+          }
+        }
+      },
+      "Azure.Data.Tables/12.10.0": {
+        "dependencies": {
+          "Azure.Core": "1.44.1"
+        },
+        "runtime": {
+          "lib/net8.0/Azure.Data.Tables.dll": {
+            "assemblyVersion": "12.10.0.0",
+            "fileVersion": "12.1000.25.6402"
+          }
+        }
+      },
+      "Azure.Storage.Blobs/12.25.1": {
+        "dependencies": {
+          "Azure.Storage.Common": "12.24.0"
+        },
+        "runtime": {
+          "lib/net8.0/Azure.Storage.Blobs.dll": {
+            "assemblyVersion": "12.25.1.0",
+            "fileVersion": "12.2500.125.47404"
+          }
+        }
+      },
+      "Azure.Storage.Common/12.24.0": {
+        "dependencies": {
+          "Azure.Core": "1.44.1",
+          "System.IO.Hashing": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/Azure.Storage.Common.dll": {
+            "assemblyVersion": "12.24.0.0",
+            "fileVersion": "12.2400.25.36407"
+          }
+        }
+      },
+      "Google.Protobuf/3.28.0": {
+        "runtime": {
+          "lib/net5.0/Google.Protobuf.dll": {
+            "assemblyVersion": "3.28.0.0",
+            "fileVersion": "3.28.0.0"
+          }
+        }
+      },
+      "Grpc.Core.Api/2.65.0": {
+        "runtime": {
+          "lib/netstandard2.1/Grpc.Core.Api.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.65.0.0"
+          }
+        }
+      },
+      "Grpc.Net.Client/2.65.0": {
+        "dependencies": {
+          "Grpc.Net.Common": "2.65.0"
+        },
+        "runtime": {
+          "lib/net8.0/Grpc.Net.Client.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.65.0.0"
+          }
+        }
+      },
+      "Grpc.Net.ClientFactory/2.65.0": {
+        "dependencies": {
+          "Grpc.Net.Client": "2.65.0"
+        },
+        "runtime": {
+          "lib/net8.0/Grpc.Net.ClientFactory.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.65.0.0"
+          }
+        }
+      },
+      "Grpc.Net.Common/2.65.0": {
+        "dependencies": {
+          "Grpc.Core.Api": "2.65.0"
+        },
+        "runtime": {
+          "lib/net8.0/Grpc.Net.Common.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.65.0.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Functions.Worker/2.50.0": {
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker.Core": "2.50.0",
+          "Microsoft.Azure.Functions.Worker.Grpc": "2.50.0"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Azure.Functions.Worker.dll": {
+            "assemblyVersion": "2.50.0.0",
+            "fileVersion": "2.50.0.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Functions.Worker.Core/2.50.0": {
+        "dependencies": {
+          "Azure.Core": "1.44.1"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Azure.Functions.Worker.Core.dll": {
+            "assemblyVersion": "2.50.0.0",
+            "fileVersion": "2.50.0.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Functions.Worker.Extensions.Abstractions/1.3.0": {
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Azure.Functions.Worker.Extensions.Abstractions.dll": {
+            "assemblyVersion": "1.3.0.0",
+            "fileVersion": "1.3.0.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Functions.Worker.Extensions.Http/3.2.0": {
+        "dependencies": {
+          "Microsoft.Azure.Functions.Worker.Core": "2.50.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Azure.Functions.Worker.Extensions.Http.dll": {
+            "assemblyVersion": "3.2.0.0",
+            "fileVersion": "3.2.0.0"
+          }
+        }
+      },
+      "Microsoft.Azure.Functions.Worker.Grpc/2.50.0": {
+        "dependencies": {
+          "Google.Protobuf": "3.28.0",
+          "Grpc.Net.ClientFactory": "2.65.0",
+          "Microsoft.Azure.Functions.Worker.Core": "2.50.0",
+          "Microsoft.Azure.Functions.Worker.Extensions.Abstractions": "1.3.0"
+        },
+        "runtime": {
+          "lib/net10.0/Microsoft.Azure.Functions.Worker.Grpc.dll": {
+            "assemblyVersion": "2.50.0.0",
+            "fileVersion": "2.50.0.0"
+          }
+        }
+      },
+      "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
+          }
+        }
+      },
+      "System.ClientModel/1.1.0": {
+        "dependencies": {
+          "System.Memory.Data": "6.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/System.ClientModel.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.100.24.46703"
+          }
+        }
+      },
+      "System.IO.Hashing/8.0.0": {
+        "runtime": {
+          "lib/net8.0/System.IO.Hashing.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        }
+      },
+      "System.Memory.Data/6.0.0": {
+        "runtime": {
+          "lib/net6.0/System.Memory.Data.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "OnlyFling.Api/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Azure.Core/1.44.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YyznXLQZCregzHvioip07/BkzjuWNXogJEVz9T5W6TwjNr17ax41YGzYMptlo2G10oLCuVPoyva62y0SIRDixg==",
+      "path": "azure.core/1.44.1",
+      "hashPath": "azure.core.1.44.1.nupkg.sha512"
+    },
+    "Azure.Data.Tables/12.10.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-fW6873rvhpAYUGXzu7JmbfSkYfppvfkKkiZqifSyOVJ0SsAWBMqHWL9VbUPsApP3DWTwakpU35nfpKTPqvFVww==",
+      "path": "azure.data.tables/12.10.0",
+      "hashPath": "azure.data.tables.12.10.0.nupkg.sha512"
+    },
+    "Azure.Storage.Blobs/12.25.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-t5BZUBYly3Wi1ksifp8uVLIirE1XJm4MrTI1hsDDA2bi/M1a38m5thwsgdd3HAIkeh5a7lladDkwi1r6ZoLKYQ==",
+      "path": "azure.storage.blobs/12.25.1",
+      "hashPath": "azure.storage.blobs.12.25.1.nupkg.sha512"
+    },
+    "Azure.Storage.Common/12.24.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JOmmSgNvH/zRWRihT6PZapEdTNESP4YtGS5OjbkUAg6EFiM6Ite7hDkqzJrA7QKmi1SRwZ40vpHi1McVpQuhgw==",
+      "path": "azure.storage.common/12.24.0",
+      "hashPath": "azure.storage.common.12.24.0.nupkg.sha512"
+    },
+    "Google.Protobuf/3.28.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-lVsLcLIHpkOABswgydr0sjkIhSN5XE9C6AgLXxvMsa6pSSJIpmAIPvK/NZpuF+HTB6xp1R8T5nhLausWVOrU/w==",
+      "path": "google.protobuf/3.28.0",
+      "hashPath": "google.protobuf.3.28.0.nupkg.sha512"
+    },
+    "Grpc.Core.Api/2.65.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-VHElVX8XpJoaoddHkxhSHrXqn+7k3cZRmAxvZFh0NElkZK5oAT0/QOPM2FJtt5/xIxjQPumz3TOkzrUT6b8V6g==",
+      "path": "grpc.core.api/2.65.0",
+      "hashPath": "grpc.core.api.2.65.0.nupkg.sha512"
+    },
+    "Grpc.Net.Client/2.65.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ys1Rz7pxV0XR2pm4BVMkm/PrJ2BQu8OXFTvnXzzelTvQ+19OiHbUSb1kSZ2X4V7FziaxrtWY52ssXK3MFjQxbg==",
+      "path": "grpc.net.client/2.65.0",
+      "hashPath": "grpc.net.client.2.65.0.nupkg.sha512"
+    },
+    "Grpc.Net.ClientFactory/2.65.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-iVJ8/uoaPccipMeyD0uwpbX6lRhFEo4aLJmGhLsdigQWi1tDdf/PHfRNZudX3lqZGuqyxl+wC2CfuApIIKPMhg==",
+      "path": "grpc.net.clientfactory/2.65.0",
+      "hashPath": "grpc.net.clientfactory.2.65.0.nupkg.sha512"
+    },
+    "Grpc.Net.Common/2.65.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-XbRegnfDrWoXZJ4GGdJat+KXnmCCkR6XQmWnIZxxIjphyZkWZgI0FN1PtGXU4RZ5a5C85qg1cscz1ju2biVXGg==",
+      "path": "grpc.net.common/2.65.0",
+      "hashPath": "grpc.net.common.2.65.0.nupkg.sha512"
+    },
+    "Microsoft.Azure.Functions.Worker/2.50.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-v/GvwHSMtrk1EQcjpSVXHqyZ7yG88mlLkfLLc/S3QFNuU+BjXI03OmUyeSkV/h8r1lrJi9aKgSClICyAsTv52g==",
+      "path": "microsoft.azure.functions.worker/2.50.0",
+      "hashPath": "microsoft.azure.functions.worker.2.50.0.nupkg.sha512"
+    },
+    "Microsoft.Azure.Functions.Worker.Core/2.50.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bLqYQodnN20gxulbojHhkyP+iYserKfQQwQCKwjpz4YYufdAyqjVC0bAmeAqoWKIdhs1Pye588Hm1KtDu4Tu3g==",
+      "path": "microsoft.azure.functions.worker.core/2.50.0",
+      "hashPath": "microsoft.azure.functions.worker.core.2.50.0.nupkg.sha512"
+    },
+    "Microsoft.Azure.Functions.Worker.Extensions.Abstractions/1.3.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+6+/Yb/ouWUweaSQhesbbiIVSmwYEzkSfjIHrBnNqIiCYnx2iLeoYyWjN/wHP3Fnn5COtyDXRDwHKr5A/tCL9Q==",
+      "path": "microsoft.azure.functions.worker.extensions.abstractions/1.3.0",
+      "hashPath": "microsoft.azure.functions.worker.extensions.abstractions.1.3.0.nupkg.sha512"
+    },
+    "Microsoft.Azure.Functions.Worker.Extensions.Http/3.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TC1xa/s1hZ97ertSh0+qZVjeXB632ObjsuVEhytND32kLfJhT7u+AiBunvdACgn6r0WOZeLIa/BZPA7qovFxiw==",
+      "path": "microsoft.azure.functions.worker.extensions.http/3.2.0",
+      "hashPath": "microsoft.azure.functions.worker.extensions.http.3.2.0.nupkg.sha512"
+    },
+    "Microsoft.Azure.Functions.Worker.Grpc/2.50.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-WzgWREv/g9mvPNt6ILDZaT98TA8FvmTWAWAwgv6MqtMafScavArG5JQaW6C3yLsjsjYirLYfCTFXhWs3wPrkuA==",
+      "path": "microsoft.azure.functions.worker.grpc/2.50.0",
+      "hashPath": "microsoft.azure.functions.worker.grpc.2.50.0.nupkg.sha512"
+    },
+    "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg==",
+      "path": "microsoft.bcl.asyncinterfaces/6.0.0",
+      "hashPath": "microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512"
+    },
+    "System.ClientModel/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UocOlCkxLZrG2CKMAAImPcldJTxeesHnHGHwhJ0pNlZEvEXcWKuQvVOER2/NiOkJGRJk978SNdw3j6/7O9H1lg==",
+      "path": "system.clientmodel/1.1.0",
+      "hashPath": "system.clientmodel.1.1.0.nupkg.sha512"
+    },
+    "System.IO.Hashing/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ne1843evDugl0md7Fjzy6QjJrzsjh46ZKbhf8GwBXb5f/gw97J4bxMs0NQKifDuThh/f0bZ0e62NPl1jzTuRqA==",
+      "path": "system.io.hashing/8.0.0",
+      "hashPath": "system.io.hashing.8.0.0.nupkg.sha512"
+    },
+    "System.Memory.Data/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ntFHArH3I4Lpjf5m4DCXQHJuGwWPNVJPaAvM95Jy/u+2Yzt2ryiyIN04LAogkjP9DeRcEOiviAjQotfmPq/FrQ==",
+      "path": "system.memory.data/6.0.0",
+      "hashPath": "system.memory.data.6.0.0.nupkg.sha512"
+    }
+  }
+}

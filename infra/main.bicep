@@ -256,7 +256,7 @@ resource functionPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
     tier: 'Dynamic'
   }
   properties: {
-    reserved: true
+    reserved: false
   }
 }
 
@@ -266,7 +266,7 @@ resource functionPrimary 'Microsoft.Web/sites@2023-12-01' = {
   tags: union(tags, {
     ring: 'primary'
   })
-  kind: 'functionapp,linux'
+  kind: 'functionapp'
   identity: {
     type: 'SystemAssigned'
   }
@@ -277,7 +277,6 @@ resource functionPrimary 'Microsoft.Web/sites@2023-12-01' = {
       ftpsState: 'Disabled'
       healthCheckPath: '/api/health'
       http20Enabled: true
-      linuxFxVersion: 'Node|20'
       minTlsVersion: '1.2'
       appSettings: [
         {
@@ -294,11 +293,31 @@ resource functionPrimary 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'node'
+          value: 'dotnet-isolated'
         }
         {
           name: 'KEY_VAULT_URI'
           value: keyVault.properties.vaultUri
+        }
+        {
+          name: 'UPLOAD_CONTAINER_NAME'
+          value: 'uploads'
+        }
+        {
+          name: 'ARTIFACT_CONTAINER_NAME'
+          value: 'artifacts'
+        }
+        {
+          name: 'DEFAULT_PLATFORM_FEE_PERCENT'
+          value: '12'
+        }
+        {
+          name: 'DEPLOYMENT_RING'
+          value: 'primary'
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
         }
         {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
@@ -315,7 +334,7 @@ resource functionCanary 'Microsoft.Web/sites@2023-12-01' = if (enableCanary) {
   tags: union(tags, {
     ring: 'canary'
   })
-  kind: 'functionapp,linux'
+  kind: 'functionapp'
   identity: {
     type: 'SystemAssigned'
   }
@@ -326,7 +345,6 @@ resource functionCanary 'Microsoft.Web/sites@2023-12-01' = if (enableCanary) {
       ftpsState: 'Disabled'
       healthCheckPath: '/api/health'
       http20Enabled: true
-      linuxFxVersion: 'Node|20'
       minTlsVersion: '1.2'
       appSettings: [
         {
@@ -343,11 +361,31 @@ resource functionCanary 'Microsoft.Web/sites@2023-12-01' = if (enableCanary) {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'node'
+          value: 'dotnet-isolated'
         }
         {
           name: 'KEY_VAULT_URI'
           value: keyVault.properties.vaultUri
+        }
+        {
+          name: 'UPLOAD_CONTAINER_NAME'
+          value: 'uploads'
+        }
+        {
+          name: 'ARTIFACT_CONTAINER_NAME'
+          value: 'artifacts'
+        }
+        {
+          name: 'DEFAULT_PLATFORM_FEE_PERCENT'
+          value: '12'
+        }
+        {
+          name: 'DEPLOYMENT_RING'
+          value: 'canary'
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
         }
         {
           name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'

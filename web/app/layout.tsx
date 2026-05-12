@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import { GoogleAnalytics } from "@/app/google-analytics";
+import { LocaleProvider } from "@/components/providers/locale-provider";
+import { SessionProvider } from "@/components/providers/session-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -24,7 +29,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Script src="/runtime-config.js" strategy="beforeInteractive" />
+        <LocaleProvider>
+          <SessionProvider>
+            <Suspense fallback={null}>
+              <GoogleAnalytics />
+            </Suspense>
+            {children}
+          </SessionProvider>
+        </LocaleProvider>
+      </body>
     </html>
   );
 }

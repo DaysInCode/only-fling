@@ -1,30 +1,51 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "OnlyFling Creator",
+    "slug": "onlyfling-creator",
+    "scheme": "onlyfling",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.daysincode.onlyfling",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "OnlyFling uses your coarse location to show nearby creator collaboration matches when you opt in.",
+        "NSUserTrackingUsageDescription": "OnlyFling uses analytics to understand onboarding and creator conversion journeys.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.daysincode.onlyfling",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "apiBaseUrl": "http://127.0.0.1:7071/api",
+      "googleAnalyticsMeasurementId": "G-REPLACE_ME"
     }
   }
 }

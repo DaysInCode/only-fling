@@ -1,0 +1,13 @@
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.AssemblyInfoInputs.cache
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.AssemblyInfo.cs
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.csproj.CoreCompileInputs.cache
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.sourcelink.json
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\bin\Debug\net10.0\OnlyFling.ServiceDefaults.deps.json
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\bin\Debug\net10.0\OnlyFling.ServiceDefaults.dll
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\bin\Debug\net10.0\OnlyFling.ServiceDefaults.pdb
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.csproj.AssemblyReference.cache
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.dll
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\refint\OnlyFling.ServiceDefaults.dll
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\OnlyFling.ServiceDefaults.pdb
+C:\code\copilot\onlyfling-com\aspire\OnlyFling.ServiceDefaults\obj\Debug\net10.0\ref\OnlyFling.ServiceDefaults.dll

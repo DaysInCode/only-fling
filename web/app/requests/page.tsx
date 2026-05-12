@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import { apiGet, apiPost, getStoredToken } from "@/lib/api";
 
 type MemberRequest = {
@@ -67,6 +68,11 @@ export default function RequestsPage() {
 
   async function submitRequest() {
     const result = await apiPost("/member-requests", form, token);
+    if (!result.error) {
+      trackEvent("member_request_created", {
+        request_type: form.type,
+      });
+    }
     setStatus(result.error ?? "Member request created.");
     if (!result.error) {
       await loadAll();
@@ -75,6 +81,11 @@ export default function RequestsPage() {
 
   async function act(requestId: string, action: "accept" | "fulfill" | "dispute") {
     const result = await apiPost("/member-requests/action", { requestId, action }, token);
+    if (!result.error) {
+      trackEvent("member_request_actioned", {
+        action,
+      });
+    }
     setStatus(result.error ?? `Request marked as ${action}.`);
     if (!result.error) {
       await loadAll();

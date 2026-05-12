@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { apiGet, apiPost, getStoredToken } from "@/lib/api";
+import { apiGet, getStoredToken } from "@/lib/api";
 
 type MePayload = {
   user: {
@@ -49,7 +49,7 @@ export default function DashboardPage() {
   const [summary, setSummary] = useState<SummaryPayload["summary"] | null>(null);
   const [affiliate, setAffiliate] = useState<AffiliateCampaignPayload | null>(null);
   const [requestSummary, setRequestSummary] = useState<MemberRequestSummaryPayload["summary"] | null>(null);
-  const [status, setStatus] = useState("");
+  const [status] = useState("");
 
   const token = getStoredToken();
 
@@ -64,53 +64,27 @@ export default function DashboardPage() {
     loadAll();
   }, [loadAll]);
 
-  async function copyAffiliateLink() {
-    if (!affiliate) {
-      return;
-    }
-
-    await navigator.clipboard.writeText(affiliate.landingUrl);
-    setStatus("Affiliate launch link copied.");
-  }
-
-  async function quickLaunch() {
-    const result = await apiPost<AffiliateCampaignPayload["campaign"]>(
-      "/affiliate/launch",
-      {
-        ctaCopy: "Click here to start earning",
-        rewardPercent: 12,
-        capSalesCount: 7,
-        capDays: 30,
-      },
-      token,
-    );
-
-    setStatus(result.error ?? "Affiliate launch settings updated.");
-    loadAll();
-  }
-
   return (
     <main className="shell section">
       <nav className="nav">
         <div className="brand">OnlyFling Starter</div>
         <div className="navLinks">
           <Link href="/">Home</Link>
-          <Link href="/collaboration">Collaboration</Link>
-          <Link href="/requests">Requests</Link>
-          <Link href="/studio">Studio</Link>
-          <Link href="/community">Community</Link>
-          <Link href="/marketplace">Marketplace</Link>
-          <Link href="/plugins">Plugins</Link>
+          <Link href="/account">Account</Link>
+          <Link href="/account/security">Security</Link>
+          <Link href="/media">Media</Link>
+          <Link href="/earnings">Earnings</Link>
+          <Link href="/account/audit">Audit</Link>
         </div>
       </nav>
 
       <section className="pageGrid">
         <div className="heroCard">
           <div className="eyebrow">Creator + operator dashboard</div>
-          <h1 className="heroTitle">Track activation, rewards, and next actions from one screen.</h1>
+          <h1 className="heroTitle">Track account readiness, media, earnings, and next secure actions.</h1>
           <p className="heroLead">
-            The funnel is designed to keep the first session productive: upload early, invite quickly, publish a first
-            offer, and unlock the next reward tier.
+            The dashboard now pushes the signed-in user into protected account journeys: finish profile controls,
+            keep canonical settings synced, upload with consent artifacts, and move earnings into payout requests.
           </p>
         </div>
         <div className="stack">
@@ -119,9 +93,9 @@ export default function DashboardPage() {
             <div className="muted">{me ? `${me.email} · ${me.role}` : "Sign in to load dashboard data."}</div>
           </div>
           <div className="panel">
-            <div className="label">Current rank</div>
-            <div className="kpi">Starter Tier</div>
-            <p className="muted">Next unlock: 1 upload + 1 published offer + 1 accepted invite.</p>
+            <div className="label">Account journeys</div>
+            <div className="kpi">Ready</div>
+            <p className="muted">Profile, settings, security, media, earnings, and audit now live under one account area.</p>
           </div>
           <div className="panel">
             <div className="label">Affiliate launch</div>
@@ -151,37 +125,33 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="card">
-          <div className="label">Collaboration</div>
-          <div className="kpi">Near me</div>
-          <p className="muted">Opt in to nearby collaboration discovery, highlights, and mutual contact release.</p>
+          <div className="label">Account settings</div>
+          <div className="kpi">Slack-style</div>
+          <p className="muted">Profile summary at top, sectioned settings, and a dedicated security + devices area.</p>
         </div>
         <div className="card">
-          <div className="label">Community demand</div>
-          <div className="kpi">Request</div>
-          <p className="muted">Ask for the next integration, vote with demand, and grow affiliate-driven reach.</p>
+          <div className="label">Media</div>
+          <div className="kpi">Queue</div>
+          <p className="muted">Collections, upload intake, consent checkpoints, and policy markdown artifacts.</p>
         </div>
         <div className="card">
-          <div className="label">Request inbox</div>
+          <div className="label">Audit</div>
           <div className="kpi">{requestSummary?.open ?? "--"}</div>
-          <p className="muted">Open member asks waiting for a promise to fulfill.</p>
+          <p className="muted">Track auth, device, media, and payout actions in the per-account trail.</p>
         </div>
       </section>
 
       <section className="section pageGrid">
         <div className="panel">
-          <div className="label">After first earnings</div>
-          <h2 style={{ marginTop: 10 }}>{affiliate?.campaign.ctaCopy ?? "Start earning with me"}</h2>
+          <div className="label">Account control center</div>
+          <h2 style={{ marginTop: 10 }}>Manage the full signed-in creator journey.</h2>
           <p className="muted" style={{ marginTop: 10 }}>
-            {affiliate?.rewardRule ??
-              "Offer a capped affiliate reward for the first sales or days, whichever comes first."}
+            Visit account settings for canonical preferences, the security area for device revocation and closure,
+            media for uploads, and earnings for graphs and payouts.
           </p>
           <div className="heroActions" style={{ marginTop: 16 }}>
-            <button className="button" type="button" onClick={copyAffiliateLink}>
-              Copy launch link
-            </button>
-            <button className="buttonSecondary" type="button" onClick={quickLaunch}>
-              Optimise CTA
-            </button>
+            <Link className="button" href="/account">Open account</Link>
+            <Link className="buttonSecondary" href="/media">Open media</Link>
           </div>
         </div>
 
@@ -194,16 +164,16 @@ export default function DashboardPage() {
                 <td>{affiliate?.campaign.activeReferrals ?? "--"}</td>
               </tr>
               <tr>
-                <td>Reward %</td>
-                <td>{affiliate?.campaign.rewardPercent ?? "--"}%</td>
+                <td>Device sync feel</td>
+                <td>Canonical</td>
               </tr>
               <tr>
-                <td>Cap sales</td>
-                <td>{affiliate?.campaign.capSalesCount ?? "--"}</td>
+                <td>Media policies</td>
+                <td>Markdown</td>
               </tr>
               <tr>
-                <td>Cap days</td>
-                <td>{affiliate?.campaign.capDays ?? "--"}</td>
+                <td>Payout flow</td>
+                <td>Manual request</td>
               </tr>
             </tbody>
           </table>

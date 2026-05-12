@@ -1,0 +1,14 @@
+{
+  "measurementId": "G-REPLACE_ME",
+  "clientId": "555.1234567890",
+  "events": [
+    {
+      "name": "tooling_smoke",
+      "params": {
+        "engagement_time_msec": 1,
+        "debug_mode": true,
+        "source": "local-tooling"
+      }
+    }
+  ]
+}

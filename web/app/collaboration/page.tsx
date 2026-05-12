@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import { apiGet, apiPost, getStoredToken } from "@/lib/api";
 
 type CollaborationProfile = {
@@ -118,6 +119,12 @@ export default function CollaborationPage() {
 
   async function saveProfile() {
     const result = await apiPost<{ profile: CollaborationProfile }>("/collaboration/profile", profile, token);
+    if (!result.error) {
+      trackEvent("collaboration_profile_saved", {
+        promoted_highlight: profile.promotedHighlight,
+        notify_on_nearby: profile.notifyOnNearby,
+      });
+    }
     setStatus(result.error ?? "Collaboration discovery saved.");
     if (!result.error) {
       await loadAll();
@@ -134,12 +141,22 @@ export default function CollaborationPage() {
       },
       token,
     );
+    if (!result.error) {
+      trackEvent("collaboration_request_sent", {
+        collaboration_type: collaborationType,
+      });
+    }
     setStatus(result.error ?? "Request sent.");
     await loadAll();
   }
 
   async function respond(requestId: string, accept: boolean) {
     const result = await apiPost("/collaboration/respond", { requestId, accept }, token);
+    if (!result.error) {
+      trackEvent("collaboration_request_responded", {
+        accepted: accept,
+      });
+    }
     setStatus(result.error ?? (accept ? "Request accepted; contact released mutually." : "Request declined."));
     await loadAll();
   }

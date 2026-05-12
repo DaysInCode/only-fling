@@ -1,0 +1,14 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "BOOTSTRAP_ADMIN_EMAIL": "admin@example.com",
+    "UPLOAD_CONTAINER_NAME": "uploads",
+    "ARTIFACT_CONTAINER_NAME": "artifacts",
+    "DEFAULT_PLATFORM_FEE_PERCENT": "12",
+    "NEXT_PUBLIC_WEB_BASE_URL": "http://127.0.0.1:3000",
+    "DEPLOYMENT_RING": "primary",
+    "ONLYFLING_DISABLE_APP_STORAGE": "true"
+  }
+}

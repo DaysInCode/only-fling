@@ -11,11 +11,18 @@ export interface UserProfile {
 }
 
 export interface SessionRecord {
+  id: string;
   token: string;
   userId: string;
   email: string;
   role: Role;
+  createdAt: string;
+  lastSeenAt: string;
   expiresAt: string;
+  revokedAt?: string;
+  deviceLabel?: string;
+  userAgent?: string;
+  ipAddress?: string;
 }
 
 export interface AuthChallenge {
@@ -52,6 +59,7 @@ export interface CatalogItem {
 export interface AuditEvent {
   id: string;
   actorId: string;
+  accountId?: string;
   action: string;
   targetType: string;
   targetId: string;
@@ -268,4 +276,206 @@ export interface StudioTimelineEntry {
     | "payout.settled"
     | "session.disputed";
   description: string;
+}
+
+export type PrivacyVisibility = "private" | "followers" | "public";
+export type PublishState = "draft" | "published";
+export type MediaLifecycleStatus = "pending" | "processing" | "ready" | "deleted";
+
+export interface UserAccountProfile {
+  userId: string;
+  displayName: string;
+  bio: string;
+  avatarUrl: string;
+  preferences: {
+    contentTags: string[];
+    collaborationInterests: string[];
+    languages: string[];
+  };
+  privacy: {
+    profileVisibility: PrivacyVisibility;
+    discoverable: boolean;
+    showActivity: boolean;
+    allowDirectMessages: boolean;
+  };
+  contact: {
+    supportEmail: string;
+    emailOptIn: boolean;
+    marketingOptIn: boolean;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CloseAccountState {
+  status: "active" | "requested" | "closed";
+  requestedAt?: string;
+  requestedBySessionId?: string;
+  closedAt?: string;
+  reason?: string;
+  retentionAcknowledged?: boolean;
+  accessLossAcknowledged?: boolean;
+}
+
+export interface AccountSettings {
+  userId: string;
+  notifications: {
+    email: boolean;
+    push: boolean;
+    product: boolean;
+    payouts: boolean;
+    security: boolean;
+  };
+  deviceSync: {
+    enabled: boolean;
+    canonicalUpdatedAt: string;
+    lastSyncedSessionId?: string;
+    sessionCount: number;
+  };
+  payoutPreferences: {
+    settlementCurrency: string;
+    schedule: "manual" | "weekly" | "monthly";
+    methodStatus: "not-configured" | "pending" | "ready";
+  };
+  closeAccount: CloseAccountState;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AccountSessionView {
+  id: string;
+  userId: string;
+  deviceLabel: string;
+  userAgent: string;
+  createdAt: string;
+  lastSeenAt: string;
+  expiresAt: string;
+  revokedAt?: string;
+  current: boolean;
+}
+
+export interface ConsentMetadata {
+  performerCount: number;
+  allAdultsConfirmed: boolean;
+  rightsConfirmed: boolean;
+  consentCapturedAt: string;
+  consentDocumentName: string;
+  recordRetentionYears: number;
+  notes: string;
+}
+
+export interface PolicyArtifactRecord {
+  id: string;
+  ownerId: string;
+  folderName: string;
+  documentName: string;
+  fileName: string;
+  uri: string;
+  createdAt: string;
+}
+
+export interface MediaCollection {
+  id: string;
+  ownerId: string;
+  folderName: string;
+  title: string;
+  description: string;
+  visibility: PrivacyVisibility;
+  publishState: PublishState;
+  priceMinor: number;
+  currency: string;
+  soldCount: number;
+  earnedMinor: number;
+  status: "active" | "deleted";
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
+export interface MediaItem {
+  id: string;
+  ownerId: string;
+  collectionId: string;
+  folderName: string;
+  title: string;
+  description: string;
+  fileName: string;
+  contentType: string;
+  mediaType: "image" | "video";
+  uploadStatus: MediaLifecycleStatus;
+  publishState: PublishState;
+  priceMinor: number;
+  currency: string;
+  soldCount: number;
+  earnedMinor: number;
+  blobUrl: string;
+  uploadUrl?: string;
+  uploadMode: "azure" | "memory";
+  expiresAt?: string;
+  requiredHeaders?: Record<string, string>;
+  backgroundStreamId: string;
+  backgroundUpdatedAt: string;
+  consent: ConsentMetadata;
+  policyArtifact: PolicyArtifactRecord;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
+export interface UploadStatusEvent {
+  id: string;
+  ownerId: string;
+  mediaItemId: string;
+  status: MediaLifecycleStatus;
+  message: string;
+  createdAt: string;
+}
+
+export interface EarningsSeriesPoint {
+  periodStart: string;
+  grossMinor: number;
+  netMinor: number;
+  feesMinor: number;
+  soldCount: number;
+  currency: string;
+}
+
+export interface AccountEarningsSummary {
+  accountId: string;
+  totalGrossMinor: number;
+  totalNetMinor: number;
+  totalFeesMinor: number;
+  availableForPayoutMinor: number;
+  pendingPayoutMinor: number;
+  paidOutMinor: number;
+  currency: string;
+  rangeStart: string;
+  rangeEnd: string;
+}
+
+export interface PayoutRequest {
+  id: string;
+  ownerId: string;
+  amountMinor: number;
+  currency: string;
+  status: "pending" | "processing" | "paid" | "rejected";
+  note: string;
+  requestedAt: string;
+  processedAt?: string;
+}
+
+export interface VerificationStep {
+  code: string;
+  title: string;
+  status: "complete" | "required" | "pending";
+}
+
+export interface VerificationReadiness {
+  userId: string;
+  status: "action-required" | "pending-review" | "ready";
+  identityStatus: "not-started" | "pending" | "verified";
+  payoutStatus: "not-configured" | "pending" | "ready";
+  consentStatus: "missing" | "partial" | "complete";
+  requiredSteps: VerificationStep[];
+  updatedAt: string;
 }

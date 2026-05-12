@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "email": "automation@example.com",
+      "displayName": "Automation Seed",
+      "role": "creator"
+    }
+  ],
+  "wallets": [
+    {
+      "email": "automation@example.com",
+      "creditsMinor": 5000,
+      "currency": "GBP"
+    }
+  ],
+  "plugins": [
+    {
+      "pluginId": "stripe",
+      "enabled": true,
+      "allowedPurchaseMethods": [
+        "credits",
+        "stripeCheckout"
+      ]
+    }
+  ]
+}

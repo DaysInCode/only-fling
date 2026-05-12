@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import { apiGet, apiPost, getStoredToken } from "@/lib/api";
 
 type PlatformRequest = {
@@ -54,6 +55,12 @@ export default function CommunityPage() {
 
   async function submitRequest() {
     const result = await apiPost("/platform-requests", form, getStoredToken());
+    if (!result.error) {
+      trackEvent("platform_request_submitted", {
+        platform_type: form.type,
+        platform_name: form.platformName,
+      });
+    }
     setStatus(result.error ?? "Platform request submitted.");
     if (!result.error) {
       await loadRequests();

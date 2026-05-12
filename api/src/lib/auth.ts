@@ -1,5 +1,5 @@
 import type { HttpRequest } from "@azure/functions";
-import { getSession } from "./persistence";
+import { getSession, touchSession } from "./persistence";
 
 export async function getBearerSession(request: HttpRequest) {
   const header = request.headers.get("authorization");
@@ -13,9 +13,9 @@ export async function getBearerSession(request: HttpRequest) {
   }
 
   const session = await getSession(token);
-  if (!session || session.expiresAt <= new Date().toISOString()) {
+  if (!session || session.revokedAt || session.expiresAt <= new Date().toISOString()) {
     return null;
   }
 
-  return session;
+  return (await touchSession(token)) ?? session;
 }

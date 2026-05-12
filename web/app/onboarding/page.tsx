@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import { apiPost, getStoredToken } from "@/lib/api";
 
 export default function OnboardingPage() {
@@ -23,6 +24,12 @@ export default function OnboardingPage() {
       },
       getStoredToken(),
     );
+
+    if (!result.error) {
+      trackEvent("onboarding_completed", {
+        region,
+      });
+    }
 
     setMessage(result.error ?? "Onboarding complete. Next step: request a secure upload URL and publish your first item.");
   }

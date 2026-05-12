@@ -1,87 +1,118 @@
 import { StatusBar } from "expo-status-bar";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-
-const cards = [
-  {
-    title: "5-minute activation",
-    body: "Terms, profile, secure upload, first item draft, and invite link in a mobile-first flow.",
-  },
-  {
-    title: "Creator rewards",
-    body: "Ranks, rewards, and referral bonuses keep the first session productive and repeatable.",
-  },
-  {
-    title: "Qualification pipeline",
-    body: "Uploads move through validation and qualification rules before publishing.",
-  },
-  {
-    title: "Admin operations",
-    body: "Users, subscriptions, disputes, audit trails, and earnings reporting for staff and accountants.",
-  },
-  {
-    title: "Nearby collaboration",
-    body: "Members can opt into coarse location sharing, appear in nearby discovery, and request content collaborations.",
-  },
-  {
-    title: "Mutual contact release",
-    body: "Contact details only unlock after both sides accept the collaboration request, while admin keeps full visibility.",
-  },
-  {
-    title: "Affiliate launch",
-    body: "After first earnings, creators can share a capped affiliate link to bring in new sellers and get rewarded.",
-  },
-  {
-    title: "Collab Studio",
-    body: "Joint uploads and remote sessions follow a fixed 60/40 split with visible payout states and settlement history.",
-  },
-];
+import { ScrollView, StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { useEffect, useState } from "react";
+import { fetchActivePlugins } from "./api";
+import { t } from "./i18n";
+import type { PluginRuntimeState } from "./types";
 
 export default function App() {
+  const [plugins, setPlugins] = useState<PluginRuntimeState[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadPlugins() {
+      setLoading(true);
+      setError(null);
+      const result = await fetchActivePlugins();
+      if (result.data) {
+        setPlugins(result.data.plugins);
+      } else {
+        setError(result.error ?? "unknown-error");
+      }
+      setLoading(false);
+    }
+    loadPlugins();
+  }, []);
+
+  const activePlugins = plugins.filter((p) => p.enabled && p.status === "active");
+  const inactivePlugins = plugins.filter((p) => !p.enabled || p.status !== "active");
+
+  function isAgeGated(plugin: PluginRuntimeState): boolean {
+    return (
+      plugin.purchaseBehavior.requireAgeVerificationForAdultContent &&
+      (plugin.configurationHints.accountAgeDays !== undefined ||
+        plugin.configurationHints.identityStatus === "verified")
+    );
+  }
+
   return (
     <View style={styles.shell}>
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.eyebrow}>OnlyFling mobile companion</Text>
-        <Text style={styles.title}>Mobile-first creator operations with onboarding, rewards, and control.</Text>
-        <Text style={styles.lead}>
-          This Expo starter mirrors the web platform: creator activation, secure uploads, referral growth, mini CRM,
-          and admin oversight.
-        </Text>
+        <Text style={styles.eyebrow}>{t("eyebrow")}</Text>
+        <Text style={styles.title}>{t("title")}</Text>
+        <Text style={styles.lead}>{t("subtitle")}</Text>
 
         <View style={styles.heroRow}>
           <View style={styles.metric}>
             <Text style={styles.metricValue}>5 min</Text>
-            <Text style={styles.metricLabel}>target first upload time</Text>
+            <Text style={styles.metricLabel}>{t("targetTime")}</Text>
           </View>
           <View style={styles.metric}>
             <Text style={styles.metricValue}>Free + Pro</Text>
-            <Text style={styles.metricLabel}>account tiers</Text>
+            <Text style={styles.metricLabel}>{t("accountTiers")}</Text>
           </View>
         </View>
 
-        <View style={styles.alertCard}>
-          <Text style={styles.alertTitle}>Nearby alert preview</Text>
-          <Text style={styles.alertBody}>
-            Anna is available 12 km away for photo/video collaboration. Tap to review the request and contact rules.
-          </Text>
-        </View>
-
-        <View style={styles.alertCard}>
-          <Text style={styles.alertTitle}>Affiliate momentum</Text>
-          <Text style={styles.alertBody}>
-            You made your first sale. Share your launch link and earn on their first sales or first days, whichever comes first.
-          </Text>
-        </View>
-
-        {cards.map((card) => (
-          <View key={card.title} style={styles.card}>
-            <Text style={styles.cardTitle}>{card.title}</Text>
-            <Text style={styles.cardBody}>{card.body}</Text>
+        {loading && (
+          <View style={styles.loadingCard}>
+            <ActivityIndicator size="small" color="#ffb4d2" />
+            <Text style={styles.loadingText}>{t("loading")}</Text>
           </View>
-        ))}
+        )}
+
+        {error && (
+          <View style={styles.errorCard}>
+            <Text style={styles.errorText}>{t("error")}</Text>
+            <Text style={styles.errorDetail}>{error}</Text>
+          </View>
+        )}
+
+        {!loading && !error && plugins.length === 0 && (
+          <View style={styles.alertCard}>
+            <Text style={styles.alertTitle}>{t("noPlugins")}</Text>
+          </View>
+        )}
+
+        {!loading && !error && activePlugins.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>{t("activePlugins")}</Text>
+            {activePlugins.map((plugin) => (
+              <View key={plugin.id} style={styles.pluginCard}>
+                <View style={styles.pluginHeader}>
+                  <Text style={styles.pluginTitle}>{plugin.displayName}</Text>
+                  {isAgeGated(plugin) && (
+                    <View style={styles.ageBadge}>
+                      <Text style={styles.ageBadgeText}>{t("ageRestricted")}</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.pluginCategory}>{plugin.category}</Text>
+                <Text style={styles.pluginBody}>{plugin.description}</Text>
+                {isAgeGated(plugin) && (
+                  <Text style={styles.pluginHint}>{t("requiresVerification")}</Text>
+                )}
+              </View>
+            ))}
+          </>
+        )}
+
+        {!loading && !error && inactivePlugins.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>{t("inactivePlugins")}</Text>
+            {inactivePlugins.map((plugin) => (
+              <View key={plugin.id} style={[styles.pluginCard, styles.inactivePluginCard]}>
+                <Text style={styles.pluginTitle}>{plugin.displayName}</Text>
+                <Text style={styles.pluginCategory}>{plugin.category}</Text>
+                <Text style={styles.pluginBody}>{plugin.description}</Text>
+              </View>
+            ))}
+          </>
+        )}
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Next mobile milestones: auth, dashboard, CRM, qualification, and notifications.</Text>
+          <Text style={styles.footerText}>{t("nextSteps")}</Text>
         </View>
       </ScrollView>
     </View>
@@ -136,11 +167,93 @@ const styles = StyleSheet.create({
     color: "#9aa6bd",
     marginTop: 6,
   },
-  card: {
+  sectionTitle: {
+    color: "#ffffff",
+    fontSize: 22,
+    fontWeight: "800",
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  pluginCard: {
     backgroundColor: "#171b25",
     borderRadius: 24,
     padding: 20,
     gap: 10,
+    borderLeftWidth: 4,
+    borderLeftColor: "#22c55e",
+  },
+  inactivePluginCard: {
+    borderLeftColor: "#64748b",
+    opacity: 0.7,
+  },
+  pluginHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 8,
+  },
+  pluginTitle: {
+    color: "#ffffff",
+    fontSize: 20,
+    fontWeight: "700",
+    flex: 1,
+  },
+  pluginCategory: {
+    color: "#ffb4d2",
+    fontSize: 14,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  pluginBody: {
+    color: "#c9d4e4",
+    lineHeight: 22,
+  },
+  pluginHint: {
+    color: "#fbbf24",
+    fontSize: 13,
+    fontStyle: "italic",
+    marginTop: 4,
+  },
+  ageBadge: {
+    backgroundColor: "#dc2626",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  ageBadgeText: {
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: "700",
+    textTransform: "uppercase",
+  },
+  loadingCard: {
+    backgroundColor: "#171b25",
+    borderRadius: 24,
+    padding: 24,
+    alignItems: "center",
+    gap: 12,
+  },
+  loadingText: {
+    color: "#9aa6bd",
+    fontSize: 16,
+  },
+  errorCard: {
+    backgroundColor: "#2c1f1f",
+    borderRadius: 24,
+    padding: 20,
+    gap: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#dc2626",
+  },
+  errorText: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  errorDetail: {
+    color: "#fca5a5",
+    fontSize: 14,
   },
   alertCard: {
     backgroundColor: "#2c1f48",
@@ -152,19 +265,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 18,
     fontWeight: "700",
-  },
-  alertBody: {
-    color: "#efe5ff",
-    lineHeight: 22,
-  },
-  cardTitle: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  cardBody: {
-    color: "#c9d4e4",
-    lineHeight: 22,
   },
   footer: {
     marginTop: 8,

@@ -27,6 +27,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
       - uses: azure/login@v2
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
@@ -60,11 +63,9 @@ jobs:
       - name: Build and package API
         shell: bash
         run: |
-          cd api
-          npm ci
-          npm run build
-          npm prune --omit=dev
-          zip -r ../api-preview.zip dist host.json package.json node_modules
+          dotnet publish api/OnlyFling.Api.csproj -c Release -o api-publish
+          cd api-publish
+          zip -r ../api-preview.zip .
       - name: Publish API preview
         shell: bash
         run: |
@@ -72,6 +73,14 @@ jobs:
             --resource-group "$RESOURCE_GROUP" \
             --name "$API_FUNCTION" \
             --src api-preview.zip
+      - name: Resolve preview endpoints
+        shell: bash
+        run: |
+          echo "WEB_URL=$(az storage account show --resource-group "$RESOURCE_GROUP" --name "$WEB_STORAGE" --query "primaryEndpoints.web" -o tsv)" >> "$GITHUB_ENV"
+          echo "API_URL=https://${API_FUNCTION}.azurewebsites.net/api" >> "$GITHUB_ENV"
+      - name: Smoke test preview deployment
+        shell: pwsh
+        run: .\scripts\test-deployment.ps1 -WebUrl $env:WEB_URL -ApiBaseUrl $env:API_URL -ApiSampleCount 5
 
   cleanup-preview:
     if: github.event.action == 'closed'

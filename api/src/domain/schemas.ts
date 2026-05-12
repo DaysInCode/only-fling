@@ -7,6 +7,7 @@ export const authRequestSchema = z.object({
 export const authVerifySchema = z.object({
   email: z.string().email(),
   code: z.string().regex(/^\d{6}$/),
+  deviceName: z.string().min(2).max(80).optional(),
 });
 
 export const onboardingSchema = z.object({
@@ -105,4 +106,131 @@ export const studioSessionSchema = z.object({
 export const studioSessionActionSchema = z.object({
   sessionId: z.string().min(2).max(120),
   action: z.enum(["confirm-split", "start-session", "initiate-payout", "approve-payout", "dispute"]),
+});
+
+const trimmedString = (min: number, max: number) => z.string().trim().min(min).max(max);
+const optionalTrimmedString = (max: number) => z.string().trim().max(max).optional().default("");
+const isoDateString = z.string().datetime({ offset: true });
+
+export const accountProfileSchema = z.object({
+  displayName: trimmedString(2, 80),
+  bio: optionalTrimmedString(500),
+  avatarUrl: z.string().trim().max(500).default(""),
+  preferences: z.object({
+    contentTags: z.array(trimmedString(2, 32)).max(12),
+    collaborationInterests: z.array(trimmedString(2, 32)).max(8),
+    languages: z.array(trimmedString(2, 24)).max(6),
+  }),
+  privacy: z.object({
+    profileVisibility: z.enum(["private", "followers", "public"]),
+    discoverable: z.boolean(),
+    showActivity: z.boolean(),
+    allowDirectMessages: z.boolean(),
+  }),
+  contact: z.object({
+    supportEmail: z.string().email(),
+    emailOptIn: z.boolean(),
+    marketingOptIn: z.boolean(),
+  }),
+});
+
+export const accountSettingsSchema = z.object({
+  notifications: z.object({
+    email: z.boolean(),
+    push: z.boolean(),
+    product: z.boolean(),
+    payouts: z.boolean(),
+    security: z.boolean(),
+  }),
+  deviceSync: z.object({
+    enabled: z.boolean(),
+    lastSyncedSessionId: z.string().min(2).max(120).optional(),
+  }),
+  payoutPreferences: z.object({
+    settlementCurrency: z.string().trim().length(3),
+    schedule: z.enum(["manual", "weekly", "monthly"]),
+    methodStatus: z.enum(["not-configured", "pending", "ready"]),
+  }),
+});
+
+export const revokeSessionSchema = z.object({
+  sessionId: z.string().min(2).max(120),
+});
+
+export const closeAccountSchema = z.object({
+  action: z.enum(["request", "close"]),
+  confirmDisplayName: trimmedString(2, 80),
+  confirmEmail: z.string().email(),
+  confirmRetentionAcknowledged: z.literal(true),
+  confirmAccessLossAcknowledged: z.literal(true),
+  reason: optionalTrimmedString(500),
+});
+
+export const mediaCollectionCreateSchema = z.object({
+  folderName: trimmedString(2, 80).regex(/^[a-zA-Z0-9][a-zA-Z0-9-_\s]{1,79}$/),
+  title: trimmedString(2, 120),
+  description: optionalTrimmedString(400),
+  visibility: z.enum(["private", "followers", "public"]).default("private"),
+  publishState: z.enum(["draft", "published"]).default("draft"),
+  priceMinor: z.number().int().min(0).max(5_000_000),
+  currency: z.string().trim().length(3).default("GBP"),
+});
+
+export const mediaCollectionUpdateSchema = mediaCollectionCreateSchema.extend({
+  collectionId: z.string().min(2).max(120),
+});
+
+export const mediaCollectionDeleteSchema = z.object({
+  collectionId: z.string().min(2).max(120),
+});
+
+export const mediaConsentSchema = z.object({
+  performerCount: z.number().int().min(1).max(8),
+  allAdultsConfirmed: z.literal(true),
+  rightsConfirmed: z.literal(true),
+  consentCapturedAt: isoDateString,
+  consentDocumentName: trimmedString(2, 80).regex(/^[a-zA-Z0-9][a-zA-Z0-9-_\s]{1,79}$/),
+  recordRetentionYears: z.number().int().min(1).max(10),
+  notes: optionalTrimmedString(300),
+});
+
+export const mediaPolicySchema = z.object({
+  folderName: trimmedString(2, 80).regex(/^[a-zA-Z0-9][a-zA-Z0-9-_\s]{1,79}$/),
+  documentName: trimmedString(2, 80).regex(/^[a-zA-Z0-9][a-zA-Z0-9-_\s]{1,79}$/),
+  termsSummary: trimmedString(10, 1000),
+  pricingSummary: trimmedString(5, 500),
+  additionalNotes: optionalTrimmedString(500),
+});
+
+export const mediaUploadIntakeSchema = z.object({
+  collectionId: z.string().min(2).max(120),
+  title: trimmedString(2, 120),
+  description: optionalTrimmedString(500),
+  fileName: trimmedString(1, 200),
+  contentType: trimmedString(3, 120),
+  mediaType: z.enum(["image", "video"]),
+  fileSizeBytes: z.number().int().positive().max(1_000_000_000),
+  priceMinor: z.number().int().min(0).max(5_000_000),
+  currency: z.string().trim().length(3).default("GBP"),
+  publishState: z.enum(["draft", "published"]).default("draft"),
+  consent: mediaConsentSchema,
+  policy: mediaPolicySchema,
+});
+
+export const mediaItemUpdateSchema = z.object({
+  mediaItemId: z.string().min(2).max(120),
+  title: trimmedString(2, 120),
+  description: optionalTrimmedString(500),
+  priceMinor: z.number().int().min(0).max(5_000_000),
+  currency: z.string().trim().length(3),
+  publishState: z.enum(["draft", "published"]),
+});
+
+export const mediaItemDeleteSchema = z.object({
+  mediaItemId: z.string().min(2).max(120),
+});
+
+export const payoutsRequestSchema = z.object({
+  amountMinor: z.number().int().min(1_000).max(5_000_000),
+  note: optionalTrimmedString(200),
 });

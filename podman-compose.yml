@@ -1,3 +1,5 @@
+x-azurite-connection-string: &azurite_connection_string "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFeqCnrW8g==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+
 services:
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:3.35.0
@@ -15,3 +17,61 @@ services:
       - "10002:10002"
     volumes:
       - ./.containers/azurite:/data:Z
+  api:
+    build:
+      context: ./api
+    container_name: onlyfling-api
+    depends_on:
+      - azurite
+    environment:
+      FUNCTIONS_WORKER_RUNTIME: dotnet-isolated
+      AzureWebJobsStorage: *azurite_connection_string
+      KEY_VAULT_URI: http://localhost/not-used-local
+      BOOTSTRAP_ADMIN_EMAIL: admin@example.com
+      AUTH_SIGNING_SECRET: replace-with-a-long-random-string
+      UPLOAD_CONTAINER_NAME: uploads
+      ARTIFACT_CONTAINER_NAME: artifacts
+      DEFAULT_PLATFORM_FEE_PERCENT: "12"
+      NEXT_PUBLIC_WEB_BASE_URL: http://host.containers.internal:3000
+      WEBSITES_PORT: "80"
+    ports:
+      - "7071:80"
+  mcp:
+    build:
+      context: ./mcp
+    container_name: onlyfling-mcp
+    depends_on:
+      - api
+    environment:
+      MCP_PORT: "3100"
+      MCP_AUTH_TOKEN: change-me
+      ONLYFLING_API_BASE_URL: http://api/api
+      ONLYFLING_API_TOKEN: ""
+    ports:
+      - "3100:3100"
+  web:
+    build:
+      context: ./web
+      target: runtime
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://host.containers.internal:7071/api
+        NEXT_PUBLIC_ENVIRONMENT: container
+    container_name: onlyfling-web
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://host.containers.internal:7071/api
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+  cypress:
+    build:
+      context: ./web
+      target: cypress-runner
+    container_name: onlyfling-cypress
+    depends_on:
+      - web
+      - api
+    environment:
+      CYPRESS_baseUrl: http://web:3000
+      CYPRESS_API_BASE_URL: http://api:80/api

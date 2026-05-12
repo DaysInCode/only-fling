@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 import { apiGet, apiPost, getStoredToken } from "@/lib/api";
 
 type StudioSession = {
@@ -96,6 +97,12 @@ export default function StudioPage() {
 
   async function createSession() {
     const result = await apiPost("/studio/sessions", form, token);
+    if (!result.error) {
+      trackEvent("studio_session_created", {
+        content_type: form.contentType,
+        session_mode: form.sessionMode,
+      });
+    }
     setStatus(result.error ?? "Studio session created.");
     if (!result.error) {
       await loadSessions();
@@ -115,6 +122,12 @@ export default function StudioPage() {
       },
       token,
     );
+    if (!result.error) {
+      trackEvent("studio_session_actioned", {
+        action,
+        session_id: selectedSession.id,
+      });
+    }
     setStatus(result.error ?? `Studio action ${action} applied.`);
     if (!result.error) {
       await loadSessions(selectedSession.id);

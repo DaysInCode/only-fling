@@ -1,36 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "@/components/providers/session-provider";
+import { trackEvent } from "@/lib/analytics";
 import { apiPost, setStoredToken } from "@/lib/api";
+import type { AuthRequestResponse, AuthVerifyResponse } from "@/lib/contracts";
 
-type VerifyPayload = {
-  token: string;
-  user: {
-    email: string;
-    role: string;
-  };
-};
-
-export default function SignInPage() {
-  const [email, setEmail] = useState("admin@example.com");
+function SignInContent() {
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo") ?? "/account/";
+  const { signIn } = useSession();
+  const [email, setEmail] = useState("creator@example.com");
+  const [deviceName, setDeviceName] = useState("Web browser");
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function requestCode() {
-    const result = await apiPost<{ developmentCode?: string }>("/auth/request-link", { email });
-    setMessage(result.error ? result.error : `Use code ${result.data?.developmentCode ?? "sent by provider"} to continue.`);
+    setLoading(true);
+    const result = await apiPost<AuthRequestResponse>("/auth/request-link", { email });
+    if (!result.error) {
+      trackEvent("auth_code_requested", {
+        flow: "passwordless",
+      });
+    }
+    setMessage(
+      result.error
+        ? result.error
+        : `Use code ${result.data?.developmentCode ?? "sent by provider"} to continue. New emails create an account on first verify.`,
+    );
+    setLoading(false);
   }
 
   async function verifyCode() {
-    const result = await apiPost<VerifyPayload>("/auth/verify", { email, code });
+    setLoading(true);
+    const result = await apiPost<AuthVerifyResponse>("/auth/verify", { email, code, deviceName });
     if (result.data) {
       setStoredToken(result.data.token);
-      setMessage(`Signed in as ${result.data.user.role}. Token stored locally.`);
+      await signIn(result.data.token);
+      trackEvent("auth_verified", {
+        role: result.data.user.role,
+      });
+      setMessage(`Signed in as ${result.data.user.role}. Redirecting…`);
+      window.location.assign(returnTo);
       return;
     }
 
     setMessage(result.error ?? "Sign-in failed.");
+    setLoading(false);
   }
 
   return (
@@ -45,34 +64,74 @@ export default function SignInPage() {
 
       <div className="pageGrid">
         <section className="heroCard">
-          <div className="eyebrow">Passwordless sign-in</div>
-          <h1 className="heroTitle">Get creators or admins in with almost no friction.</h1>
+          <div className="eyebrow">Create account or sign in</div>
+          <h1 className="heroTitle">Create a creator account, then land directly in protected account tools.</h1>
           <p className="heroLead">
-            This starter uses a local magic-link style flow. In development it returns the code directly so the funnel
-            stays fast while the real email provider is still pending.
+            This starter keeps auth lightweight: request a development code, verify it, and the backend creates the
+            account automatically on first use. Session storage stays local to the browser until sign out.
           </p>
+          <ul className="list" style={{ marginTop: 24 }}>
+            <li>Use a unique email to create a new account.</li>
+            <li>Name the current device so session management stays readable.</li>
+            <li>Protected account pages redirect back here when you are signed out.</li>
+          </ul>
         </section>
 
         <section className="panel">
           <form className="form" onSubmit={(event) => event.preventDefault()}>
-            <label className="field">
+            <label className="field fieldBlock">
               <span>Email</span>
-              <input className="input" value={email} onChange={(event) => setEmail(event.target.value)} />
+              <input
+                className="input"
+                type="email"
+                data-cy="auth-email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
             </label>
-            <button className="button" type="button" onClick={requestCode}>
-              Request code
-            </button>
-            <label className="field">
+            <label className="field fieldBlock">
+              <span>Device name</span>
+              <input
+                className="input"
+                type="text"
+                data-cy="auth-device"
+                value={deviceName}
+                onChange={(event) => setDeviceName(event.target.value)}
+              />
+            </label>
+            <div className="heroActions">
+              <button className="button" type="button" data-cy="auth-request" onClick={requestCode} disabled={loading}>
+                {loading ? "Requesting…" : "Request code"}
+              </button>
+            </div>
+            <label className="field fieldBlock">
               <span>Verification code</span>
-              <input className="input" value={code} onChange={(event) => setCode(event.target.value)} />
+              <input
+                className="input"
+                inputMode="numeric"
+                data-cy="auth-code"
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+              />
             </label>
-            <button className="buttonSecondary" type="button" onClick={verifyCode}>
-              Verify and store session
+            <button className="buttonSecondary" type="button" data-cy="auth-verify" onClick={verifyCode} disabled={loading}>
+              Verify and open account
             </button>
           </form>
-          {message ? <div className="banner" style={{ marginTop: 16 }}>{message}</div> : null}
+          {message ? <div className="banner" data-cy="auth-message" style={{ marginTop: 16 }}>{message}</div> : null}
+          <p className="muted" style={{ marginTop: 16 }}>
+            Already exploring? Go to <Link href="/account">Account</Link> after signing in.
+          </p>
         </section>
       </div>
     </main>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<main className="shell section"><div className="panel">Loading sign-in…</div></main>}>
+      <SignInContent />
+    </Suspense>
   );
 }

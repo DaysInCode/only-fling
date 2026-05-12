@@ -1,13 +1,21 @@
 {
   "IsEncrypted": false,
   "Values": {
-    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "KEY_VAULT_URI": "http://localhost/not-used-local",
     "BOOTSTRAP_ADMIN_EMAIL": "admin@example.com",
-    "AUTH_SIGNING_SECRET": "replace-with-a-long-random-string",
-    "UPLOAD_CONTAINER_NAME": "media",
+    "UPLOAD_CONTAINER_NAME": "uploads",
+    "ARTIFACT_CONTAINER_NAME": "artifacts",
     "DEFAULT_PLATFORM_FEE_PERCENT": "12",
-    "NEXT_PUBLIC_WEB_BASE_URL": "http://127.0.0.1:3000"
+    "NEXT_PUBLIC_WEB_BASE_URL": "http://127.0.0.1:3000",
+    "DEPLOYMENT_RING": "primary",
+    "ONLYFLING_DISABLE_APP_STORAGE": "true",
+    "ADMIN_SEED_IMPORT_ROOT": "seed",
+    "STRIPE_SECRET_KEY": "",
+    "STRIPE_PUBLISHABLE_KEY": "",
+    "STRIPE_WEBHOOK_SECRET": "",
+    "STRIPE_CHECKOUT_BASE_URL": "",
+    "PAYPAL_PAYOUT_CLIENT_ID": "",
+    "PAYPAL_PAYOUT_CLIENT_SECRET": ""
   }
 }

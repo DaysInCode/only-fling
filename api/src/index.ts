@@ -1,4 +1,14 @@
 import { app } from "@azure/functions";
+import {
+  accountAudit,
+  accountClose,
+  accountProfile,
+  accountSessions,
+  accountSessionsRevoke,
+  accountSettings,
+  verificationReadiness,
+} from "./functions/account";
+import { accountEarningsSummary, accountPayoutRequest, accountPayouts } from "./functions/account-earnings";
 import { auditLog } from "./functions/admin";
 import { adminCollaborationOverview } from "./functions/admin-collaboration";
 import { adminEarnings, adminSubscriptions, adminUsers } from "./functions/admin-ops";
@@ -21,6 +31,16 @@ import { affiliateLaunch, memberRequestAction, memberRequests, studioSessionActi
 import { completeOnboarding } from "./functions/onboarding";
 import { adminPlatformRequests, platformRequests } from "./functions/platform-requests";
 import { qualification } from "./functions/qualification";
+import {
+  mediaCollectionDelete,
+  mediaCollectionItems,
+  mediaCollectionUpdate,
+  mediaCollections,
+  mediaItemDeleteAction,
+  mediaItemUpdateAction,
+  mediaUploadEvents,
+  mediaUploadIntake,
+} from "./functions/media-library";
 import { presignUpload } from "./functions/uploads";
 
 app.http("health", {
@@ -231,4 +251,130 @@ app.http("studio-session-action", {
   authLevel: "anonymous",
   route: "studio/sessions/action",
   handler: studioSessionAction,
+});
+
+app.http("account-profile", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/profile",
+  handler: accountProfile,
+});
+
+app.http("account-settings", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/settings",
+  handler: accountSettings,
+});
+
+app.http("account-sessions", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/sessions",
+  handler: accountSessions,
+});
+
+app.http("account-sessions-revoke", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/sessions/revoke",
+  handler: accountSessionsRevoke,
+});
+
+app.http("account-close", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/close",
+  handler: accountClose,
+});
+
+app.http("account-audit", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/audit",
+  handler: accountAudit,
+});
+
+app.http("account-verification-readiness", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "account/verification-readiness",
+  handler: verificationReadiness,
+});
+
+app.http("media-collections", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/collections",
+  handler: mediaCollections,
+});
+
+app.http("media-collections-update", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/collections/update",
+  handler: mediaCollectionUpdate,
+});
+
+app.http("media-collections-delete", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/collections/delete",
+  handler: mediaCollectionDelete,
+});
+
+app.http("media-collection-items", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/collections/{collectionId}/items",
+  handler: mediaCollectionItems,
+});
+
+app.http("media-upload-intake", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/uploads/intake",
+  handler: mediaUploadIntake,
+});
+
+app.http("media-upload-events", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/uploads/events",
+  handler: mediaUploadEvents,
+});
+
+app.http("media-item-update", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/items/update",
+  handler: mediaItemUpdateAction,
+});
+
+app.http("media-item-delete", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "media/items/delete",
+  handler: mediaItemDeleteAction,
+});
+
+app.http("account-earnings-summary", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "earnings/summary",
+  handler: accountEarningsSummary,
+});
+
+app.http("account-payouts", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "payouts",
+  handler: accountPayouts,
+});
+
+app.http("account-payout-request", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "payouts/request",
+  handler: accountPayoutRequest,
 });
