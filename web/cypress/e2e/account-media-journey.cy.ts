@@ -50,6 +50,6 @@ describe("account and media journeys", () => {
     cy.contains("Request payout").click();
 
     cy.visit("/account/security");
-    cy.contains("Close account").should("be.disabled");
+    cy.contains("button", "Close account").should("be.disabled");
   });
 });
