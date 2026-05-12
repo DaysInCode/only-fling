@@ -185,3 +185,87 @@ export interface PlatformRequest {
   votes: number;
   createdAt: string;
 }
+
+export interface AffiliateCampaign {
+  id: string;
+  ownerUserId: string;
+  ownerDisplayName: string;
+  shareCode: string;
+  ctaCopy: string;
+  rewardPercent: number;
+  capSalesCount: number;
+  capDays: number;
+  activeReferrals: number;
+  rewardMinorPaid: number;
+  currency: string;
+  createdAt: string;
+}
+
+export interface MemberRequest {
+  id: string;
+  requesterUserId: string;
+  requesterDisplayName: string;
+  targetUserId: string;
+  targetDisplayName: string;
+  title: string;
+  details: string;
+  type: "content-collab" | "custom-request" | "video-bundle";
+  status: "open" | "accepted" | "fulfilled" | "disputed";
+  promisedByUserId?: string;
+  createdAt: string;
+  promisedAt?: string;
+  fulfilledAt?: string;
+}
+
+export type StudioSessionStatus =
+  | "draft"
+  | "pending_partner_confirm"
+  | "both_confirmed"
+  | "live"
+  | "payout_initiated"
+  | "payout_approved_creator_a"
+  | "payout_approved_creator_b"
+  | "settled"
+  | "disputed";
+
+export interface StudioSession {
+  id: string;
+  title: string;
+  initiatorUserId: string;
+  creatorAUserId: string;
+  creatorADisplayName: string;
+  creatorBUserId: string;
+  creatorBDisplayName: string;
+  contentType: "photo" | "video" | "stream";
+  sessionMode: "remote-stream" | "upload-bundle";
+  status: StudioSessionStatus;
+  grossMinor: number;
+  feesMinor: number;
+  netMinor: number;
+  creatorAShareMinor: number;
+  creatorBShareMinor: number;
+  creatorASharePercent: 60;
+  creatorBSharePercent: 40;
+  partnerConfirmed: boolean;
+  createdAt: string;
+}
+
+export interface StudioTimelineEntry {
+  id: string;
+  sessionId: string;
+  timestamp: string;
+  actorDisplayName: string;
+  eventType:
+    | "request.accepted"
+    | "split.initiated"
+    | "split.confirmed"
+    | "session.started"
+    | "session.ended"
+    | "item.published"
+    | "purchase.recorded"
+    | "payout.initiated"
+    | "payout.approved"
+    | "payout.settled"
+    | "session.disputed";
+  description: string;
+}

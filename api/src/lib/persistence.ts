@@ -1,6 +1,7 @@
 import { TableClient } from "@azure/data-tables";
 import { createId } from "@paralleldrive/cuid2";
 import type {
+  AffiliateCampaign,
   AuditEvent,
   AuthChallenge,
   CatalogItem,
@@ -10,6 +11,7 @@ import type {
   DashboardSummary,
   EarningsReportRow,
   LeadRecord,
+  MemberRequest,
   ModerationCase,
   NearbyMember,
   OnboardingRecord,
@@ -17,6 +19,8 @@ import type {
   QualificationRule,
   Role,
   SessionRecord,
+  StudioSession,
+  StudioTimelineEntry,
   SubscriptionSummary,
   UserProfile,
 } from "../domain/types";
@@ -155,6 +159,134 @@ const memory = (() => {
     ]),
     collaborationRequests: new Map<string, CollaborationRequest>(),
     collaborationAlerts: new Map<string, CollaborationAlert[]>(),
+    affiliateCampaigns: [
+      {
+        id: "affiliate-anna",
+        ownerUserId: creatorOne.id,
+        ownerDisplayName: creatorOne.displayName,
+        shareCode: "anna-earns",
+        ctaCopy: "Start earning with me",
+        rewardPercent: 10,
+        capSalesCount: 5,
+        capDays: 21,
+        activeReferrals: 3,
+        rewardMinorPaid: 3800,
+        currency: "GBP",
+        createdAt: now,
+      },
+      {
+        id: "affiliate-luca",
+        ownerUserId: creatorTwo.id,
+        ownerDisplayName: creatorTwo.displayName,
+        shareCode: "luca-launch",
+        ctaCopy: "Click here to start earning",
+        rewardPercent: 12,
+        capSalesCount: 7,
+        capDays: 30,
+        activeReferrals: 2,
+        rewardMinorPaid: 2700,
+        currency: "GBP",
+        createdAt: now,
+      },
+    ] as AffiliateCampaign[],
+    memberRequests: [
+      {
+        id: "request-brief-001",
+        requesterUserId: creatorTwo.id,
+        requesterDisplayName: creatorTwo.displayName,
+        targetUserId: creatorOne.id,
+        targetDisplayName: creatorOne.displayName,
+        title: "Fitness duo teaser",
+        details: "Need a quick two-person teaser bundle this week with clear delivery timing.",
+        type: "video-bundle",
+        status: "accepted",
+        promisedByUserId: creatorOne.id,
+        createdAt: now,
+        promisedAt: now,
+      },
+      {
+        id: "request-brief-002",
+        requesterUserId: creatorOne.id,
+        requesterDisplayName: creatorOne.displayName,
+        targetUserId: creatorTwo.id,
+        targetDisplayName: creatorTwo.displayName,
+        title: "Joint photo set",
+        details: "Looking for a same-day collaboration set with shared promotion.",
+        type: "content-collab",
+        status: "open",
+        createdAt: now,
+      },
+    ] as MemberRequest[],
+    studioSessions: [
+      {
+        id: "studio-session-001",
+        title: "Rooftop Session - May 2026",
+        initiatorUserId: creatorOne.id,
+        creatorAUserId: creatorOne.id,
+        creatorADisplayName: creatorOne.displayName,
+        creatorBUserId: creatorTwo.id,
+        creatorBDisplayName: creatorTwo.displayName,
+        contentType: "video",
+        sessionMode: "upload-bundle",
+        status: "payout_initiated",
+        grossMinor: 24800,
+        feesMinor: 2976,
+        netMinor: 21824,
+        creatorAShareMinor: 13094,
+        creatorBShareMinor: 8730,
+        creatorASharePercent: 60,
+        creatorBSharePercent: 40,
+        partnerConfirmed: true,
+        createdAt: now,
+      },
+      {
+        id: "studio-session-002",
+        title: "Live Duo Session",
+        initiatorUserId: creatorTwo.id,
+        creatorAUserId: creatorTwo.id,
+        creatorADisplayName: creatorTwo.displayName,
+        creatorBUserId: creatorOne.id,
+        creatorBDisplayName: creatorOne.displayName,
+        contentType: "stream",
+        sessionMode: "remote-stream",
+        status: "pending_partner_confirm",
+        grossMinor: 11250,
+        feesMinor: 1350,
+        netMinor: 9900,
+        creatorAShareMinor: 5940,
+        creatorBShareMinor: 3960,
+        creatorASharePercent: 60,
+        creatorBSharePercent: 40,
+        partnerConfirmed: false,
+        createdAt: now,
+      },
+    ] as StudioSession[],
+    studioTimeline: [
+      {
+        id: "timeline-001",
+        sessionId: "studio-session-001",
+        timestamp: now,
+        actorDisplayName: creatorOne.displayName,
+        eventType: "split.initiated",
+        description: "Initiator created the fixed 60/40 split.",
+      },
+      {
+        id: "timeline-002",
+        sessionId: "studio-session-001",
+        timestamp: now,
+        actorDisplayName: creatorTwo.displayName,
+        eventType: "split.confirmed",
+        description: "Partner agreed to the split arrangement.",
+      },
+      {
+        id: "timeline-003",
+        sessionId: "studio-session-001",
+        timestamp: now,
+        actorDisplayName: "system",
+        eventType: "payout.initiated",
+        description: "Settlement initiated for both creators.",
+      },
+    ] as StudioTimelineEntry[],
     platformRequests: [
       {
         id: "platform-request-telegram-bot",
@@ -815,4 +947,232 @@ export async function createPlatformRequest(
 
   memory.platformRequests.unshift(request);
   return request;
+}
+
+export async function getAffiliateCampaign(userId: string) {
+  return memory.affiliateCampaigns.find((campaign) => campaign.ownerUserId === userId) ?? null;
+}
+
+export async function saveAffiliateCampaign(
+  userId: string,
+  ownerDisplayName: string,
+  ctaCopy: string,
+  rewardPercent: number,
+  capSalesCount: number,
+  capDays: number,
+) {
+  const existing = memory.affiliateCampaigns.find((campaign) => campaign.ownerUserId === userId);
+  if (existing) {
+    existing.ctaCopy = ctaCopy;
+    existing.rewardPercent = rewardPercent;
+    existing.capSalesCount = capSalesCount;
+    existing.capDays = capDays;
+    return existing;
+  }
+
+  const created: AffiliateCampaign = {
+    id: `affiliate-${createId()}`,
+    ownerUserId: userId,
+    ownerDisplayName,
+    shareCode: `${ownerDisplayName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${createId().slice(0, 6)}`,
+    ctaCopy,
+    rewardPercent,
+    capSalesCount,
+    capDays,
+    activeReferrals: 0,
+    rewardMinorPaid: 0,
+    currency: "GBP",
+    createdAt: new Date().toISOString(),
+  };
+
+  memory.affiliateCampaigns.unshift(created);
+  return created;
+}
+
+export async function listMemberRequests(userId: string) {
+  return memory.memberRequests.filter(
+    (request) => request.requesterUserId === userId || request.targetUserId === userId,
+  );
+}
+
+export async function createMemberRequest(
+  requesterUserId: string,
+  requesterDisplayName: string,
+  targetUserId: string,
+  targetDisplayName: string,
+  title: string,
+  details: string,
+  type: MemberRequest["type"],
+) {
+  const request: MemberRequest = {
+    id: `member-request-${createId()}`,
+    requesterUserId,
+    requesterDisplayName,
+    targetUserId,
+    targetDisplayName,
+    title,
+    details,
+    type,
+    status: "open",
+    createdAt: new Date().toISOString(),
+  };
+
+  memory.memberRequests.unshift(request);
+  return request;
+}
+
+export async function actOnMemberRequest(requestId: string, actorUserId: string, action: "accept" | "fulfill" | "dispute") {
+  const request = memory.memberRequests.find((entry) => entry.id === requestId);
+  if (!request) {
+    throw new Error("not-found");
+  }
+
+  if (action === "accept") {
+    request.status = "accepted";
+    request.promisedByUserId = actorUserId;
+    request.promisedAt = new Date().toISOString();
+  }
+
+  if (action === "fulfill") {
+    request.status = "fulfilled";
+    request.fulfilledAt = new Date().toISOString();
+  }
+
+  if (action === "dispute") {
+    request.status = "disputed";
+  }
+
+  return request;
+}
+
+export async function listStudioSessions(userId: string) {
+  return memory.studioSessions.filter(
+    (session) => session.creatorAUserId === userId || session.creatorBUserId === userId,
+  );
+}
+
+export async function listAllStudioSessions() {
+  return [...memory.studioSessions];
+}
+
+export async function listStudioTimeline(sessionId: string) {
+  return memory.studioTimeline
+    .filter((entry) => entry.sessionId === sessionId)
+    .sort((left, right) => right.timestamp.localeCompare(left.timestamp));
+}
+
+export async function createStudioSession(
+  initiatorUserId: string,
+  initiatorDisplayName: string,
+  partnerUserId: string,
+  partnerDisplayName: string,
+  title: string,
+  contentType: "photo" | "video" | "stream",
+  sessionMode: "remote-stream" | "upload-bundle",
+  grossMinor: number,
+  feesMinor: number,
+) {
+  const netMinor = grossMinor - feesMinor;
+  const creatorAShareMinor = Math.round(netMinor * 0.6);
+  const creatorBShareMinor = netMinor - creatorAShareMinor;
+  const session: StudioSession = {
+    id: `studio-session-${createId()}`,
+    title,
+    initiatorUserId,
+    creatorAUserId: initiatorUserId,
+    creatorADisplayName: initiatorDisplayName,
+    creatorBUserId: partnerUserId,
+    creatorBDisplayName: partnerDisplayName,
+    contentType,
+    sessionMode,
+    status: "pending_partner_confirm",
+    grossMinor,
+    feesMinor,
+    netMinor,
+    creatorAShareMinor,
+    creatorBShareMinor,
+    creatorASharePercent: 60,
+    creatorBSharePercent: 40,
+    partnerConfirmed: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  memory.studioSessions.unshift(session);
+  memory.studioTimeline.unshift({
+    id: `timeline-${createId()}`,
+    sessionId: session.id,
+    timestamp: new Date().toISOString(),
+    actorDisplayName: initiatorDisplayName,
+    eventType: "split.initiated",
+    description: "Initiator created the fixed 60/40 split.",
+  });
+
+  return session;
+}
+
+export async function actOnStudioSession(
+  sessionId: string,
+  actorUserId: string,
+  actorDisplayName: string,
+  action: "confirm-split" | "start-session" | "initiate-payout" | "approve-payout" | "dispute",
+) {
+  const session = memory.studioSessions.find((entry) => entry.id === sessionId);
+  if (!session) {
+    throw new Error("not-found");
+  }
+
+  let eventType: StudioTimelineEntry["eventType"] = "split.confirmed";
+  let description = "";
+
+  if (action === "confirm-split") {
+    session.partnerConfirmed = true;
+    session.status = "both_confirmed";
+    eventType = "split.confirmed";
+    description = `${actorDisplayName} agreed to the fixed 60/40 split.`;
+  }
+
+  if (action === "start-session") {
+    session.status = "live";
+    eventType = "session.started";
+    description = `${actorDisplayName} started the ${session.sessionMode} session.`;
+  }
+
+  if (action === "initiate-payout") {
+    session.status = "payout_initiated";
+    eventType = "payout.initiated";
+    description = `${actorDisplayName} initiated payout settlement.`;
+  }
+
+  if (action === "approve-payout") {
+    if (actorUserId === session.creatorAUserId) {
+      session.status =
+        session.status === "payout_approved_creator_b" ? "settled" : "payout_approved_creator_a";
+    } else if (actorUserId === session.creatorBUserId) {
+      session.status =
+        session.status === "payout_approved_creator_a" ? "settled" : "payout_approved_creator_b";
+    }
+
+    eventType = session.status === "settled" ? "payout.settled" : "payout.approved";
+    description =
+      session.status === "settled"
+        ? `${actorDisplayName} completed final payout approval and settlement was recorded.`
+        : `${actorDisplayName} approved the payout.`;
+  }
+
+  if (action === "dispute") {
+    session.status = "disputed";
+    eventType = "session.disputed";
+    description = `${actorDisplayName} opened a dispute on the session.`;
+  }
+
+  memory.studioTimeline.unshift({
+    id: `timeline-${createId()}`,
+    sessionId,
+    timestamp: new Date().toISOString(),
+    actorDisplayName,
+    eventType,
+    description,
+  });
+
+  return session;
 }

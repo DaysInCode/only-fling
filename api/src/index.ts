@@ -2,6 +2,7 @@ import { app } from "@azure/functions";
 import { auditLog } from "./functions/admin";
 import { adminCollaborationOverview } from "./functions/admin-collaboration";
 import { adminEarnings, adminSubscriptions, adminUsers } from "./functions/admin-ops";
+import { adminStudioOverview } from "./functions/admin-studio";
 import { me, requestLink, verifyLink } from "./functions/auth";
 import {
   collaborationAlerts,
@@ -16,6 +17,7 @@ import { dashboardSummary } from "./functions/dashboard";
 import { health } from "./functions/health";
 import { items } from "./functions/items";
 import { moderationQueue } from "./functions/moderation";
+import { affiliateLaunch, memberRequestAction, memberRequests, studioSessionAction, studioSessions } from "./functions/monetization";
 import { completeOnboarding } from "./functions/onboarding";
 import { adminPlatformRequests, platformRequests } from "./functions/platform-requests";
 import { qualification } from "./functions/qualification";
@@ -187,4 +189,46 @@ app.http("admin-platform-requests", {
   authLevel: "anonymous",
   route: "admin/platform-requests",
   handler: adminPlatformRequests,
+});
+
+app.http("admin-studio-overview", {
+  methods: ["GET", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "admin/studio",
+  handler: adminStudioOverview,
+});
+
+app.http("affiliate-launch", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "affiliate/launch",
+  handler: affiliateLaunch,
+});
+
+app.http("member-requests", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "member-requests",
+  handler: memberRequests,
+});
+
+app.http("member-request-action", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "member-requests/action",
+  handler: memberRequestAction,
+});
+
+app.http("studio-sessions", {
+  methods: ["GET", "POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "studio/sessions",
+  handler: studioSessions,
+});
+
+app.http("studio-session-action", {
+  methods: ["POST", "OPTIONS"],
+  authLevel: "anonymous",
+  route: "studio/sessions/action",
+  handler: studioSessionAction,
 });

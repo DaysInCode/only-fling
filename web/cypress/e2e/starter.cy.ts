@@ -22,4 +22,16 @@ describe("OnlyFling starter", () => {
     cy.contains("Community growth and requests");
     cy.contains("Submit request");
   });
+
+  it("renders the requests page", () => {
+    cy.visit("/requests");
+    cy.contains("Request outlet and promises");
+    cy.contains("Create request");
+  });
+
+  it("renders the studio page", () => {
+    cy.visit("/studio");
+    cy.contains("Collab Studio");
+    cy.contains("Create session");
+  });
 });

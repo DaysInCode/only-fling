@@ -73,3 +73,36 @@ export const platformRequestSchema = z.object({
   type: z.enum(["publishing", "payments", "analytics", "messaging", "crm"]),
   note: z.string().min(5).max(240),
 });
+
+export const affiliateCampaignSchema = z.object({
+  ctaCopy: z.string().min(8).max(120),
+  rewardPercent: z.number().int().min(1).max(40),
+  capSalesCount: z.number().int().min(1).max(50),
+  capDays: z.number().int().min(1).max(90),
+});
+
+export const memberRequestSchema = z.object({
+  targetUserId: z.string().min(2).max(120),
+  title: z.string().min(4).max(100),
+  details: z.string().min(8).max(300),
+  type: z.enum(["content-collab", "custom-request", "video-bundle"]),
+});
+
+export const memberRequestActionSchema = z.object({
+  requestId: z.string().min(2).max(120),
+  action: z.enum(["accept", "fulfill", "dispute"]),
+});
+
+export const studioSessionSchema = z.object({
+  title: z.string().min(4).max(120),
+  partnerUserId: z.string().min(2).max(120),
+  contentType: z.enum(["photo", "video", "stream"]),
+  sessionMode: z.enum(["remote-stream", "upload-bundle"]),
+  grossMinor: z.number().int().positive().max(5000000),
+  feesMinor: z.number().int().min(0).max(1000000),
+});
+
+export const studioSessionActionSchema = z.object({
+  sessionId: z.string().min(2).max(120),
+  action: z.enum(["confirm-split", "start-session", "initiate-payout", "approve-payout", "dispute"]),
+});

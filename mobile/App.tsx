@@ -26,6 +26,14 @@ const cards = [
     title: "Mutual contact release",
     body: "Contact details only unlock after both sides accept the collaboration request, while admin keeps full visibility.",
   },
+  {
+    title: "Affiliate launch",
+    body: "After first earnings, creators can share a capped affiliate link to bring in new sellers and get rewarded.",
+  },
+  {
+    title: "Collab Studio",
+    body: "Joint uploads and remote sessions follow a fixed 60/40 split with visible payout states and settlement history.",
+  },
 ];
 
 export default function App() {
@@ -55,6 +63,13 @@ export default function App() {
           <Text style={styles.alertTitle}>Nearby alert preview</Text>
           <Text style={styles.alertBody}>
             Anna is available 12 km away for photo/video collaboration. Tap to review the request and contact rules.
+          </Text>
+        </View>
+
+        <View style={styles.alertCard}>
+          <Text style={styles.alertTitle}>Affiliate momentum</Text>
+          <Text style={styles.alertBody}>
+            You made your first sale. Share your launch link and earn on their first sales or first days, whichever comes first.
           </Text>
         </View>
 

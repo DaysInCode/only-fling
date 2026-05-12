@@ -224,6 +224,73 @@ The platform should also support a **community demand loop** so users can reques
 
 These should feel **friendly, momentum-driven, and competitive without becoming deceptive**.
 
+## Affiliate launch flow
+
+After a creator gets early earnings, the platform should surface a simple affiliate prompt such as:
+
+- "Start earning with me"
+- "Click here to start earning"
+
+The affiliate reward should be **capped**:
+
+- valid for the first number of sales or first number of days
+- whichever comes first
+- clearly disclosed in the UI
+
+## Member request outlet
+
+Creators need a structured request outlet where members can ask for:
+
+- content collaborations
+- custom requests
+- video bundles
+
+The target creator can:
+
+- accept the request
+- make a visible promise to fulfill
+- mark it fulfilled
+- dispute it
+
+## Collab studio and 60/40 split
+
+The platform also needs a **Collab Studio** flow for joint items and remote sessions.
+
+### Rules
+
+- remote-stream and upload-bundle modes
+- fixed 60/40 creator split
+- gross, fee, net, and both creator shares shown clearly
+- partner confirmation before go-live
+- payout approval states visible
+- settlement audit trail retained
+
+### Minimum states
+
+- draft
+- pending partner confirm
+- both confirmed
+- live
+- payout initiated
+- payout approved creator A
+- payout approved creator B
+- settled
+- disputed
+
+### Audit model
+
+The platform must record at least:
+
+- split initiated
+- split confirmed
+- session started
+- session ended
+- item published
+- payout initiated
+- payout approved
+- payout settled
+- dispute opened
+
 ## Current blockers
 
 1. The requested remote repository `https://github.com/DaysInCode/only-fling.git` is not currently reachable from this environment (`repository not found`).
@@ -239,5 +306,8 @@ These should feel **friendly, momentum-driven, and competitive without becoming 
 - mobile companion dashboard
 - collaboration discovery API + UI
 - community platform-request API + UI
+- affiliate launch API + UI
+- member request inbox API + UI
+- collab studio and settlement API + UI
 - Cypress smoke coverage
 - local emulator wiring and deployment verification

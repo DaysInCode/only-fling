@@ -41,6 +41,7 @@ export default function AdminPage() {
           <Link href="/crm">CRM</Link>
           <Link href="/qualification">Qualification</Link>
           <Link href="/admin/collaboration">Collaboration</Link>
+          <Link href="/admin/studio">Studio</Link>
         </div>
       </nav>
 
