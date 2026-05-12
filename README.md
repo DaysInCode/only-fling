@@ -60,6 +60,9 @@ This repo is scaffolded for a low-cost Azure starter platform with:
   - if health checks fail, return traffic to current stable ring without redeploying old artifacts
 - `.github/workflows/infra.yml`
   - manual or path-based infra reconciliation for dev/prod
+- `.github/workflows/deploy-static-web-app.yml`
+  - builds `web` as static export and deploys `web/out` to Azure Static Web Apps
+  - expects `AZURE_STATIC_WEB_APPS_API_TOKEN` and public `NEXT_PUBLIC_*` variables
 
 ### OIDC model
 
@@ -76,8 +79,23 @@ Store only these in GitHub **Variables**:
 - `AZURE_SUBSCRIPTION_ID`
 - `AZURE_LOCATION`
 - `AZURE_RESOURCE_GROUP_PROD`
+- `NEXT_PUBLIC_API_BASE_URL` (for static web app build-time API endpoint)
+- `NEXT_PUBLIC_ENVIRONMENT` (for static web app build-time environment label)
+- optional: `NEXT_PUBLIC_GA_MEASUREMENT_ID`
 
 No publish profiles or long-lived Azure secrets are required.
+
+### Azure Static Web App deployment quick setup
+
+1. Create an Azure Static Web App in your target subscription/resource group.
+2. In the Static Web App, generate a deployment token and add it as GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+3. In GitHub repository variables, set:
+   - `NEXT_PUBLIC_API_BASE_URL` (for example `https://<function-app>.azurewebsites.net/api`)
+   - `NEXT_PUBLIC_ENVIRONMENT` (`production` or `prod`)
+   - optional `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+4. Run GitHub Actions workflow `deploy-static-web-app` (manual dispatch or push to `main` with `web/**` changes).
+
+This path hosts the Next.js static export in Azure Static Web Apps while keeping API deployment on Azure Functions.
 
 ## 3. Canary + preview pattern
 
@@ -252,6 +270,7 @@ This builds the static-export web container, starts the supporting API + Azurite
 - `.github/workflows/preview.yml`
 - `.github/workflows/release-canary.yml`
 - `.github/workflows/infra.yml`
+- `.github/workflows/deploy-static-web-app.yml`
 - `scripts/run-local-system.ps1`
 - `scripts/validate-local-system.ps1`
 - `scripts/test-deployment.ps1`
