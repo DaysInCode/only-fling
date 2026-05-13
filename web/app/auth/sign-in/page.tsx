@@ -13,6 +13,7 @@ function SignInContent() {
   const returnTo = searchParams.get("returnTo") ?? "/account/";
   const { signIn } = useSession();
   const [email, setEmail] = useState("creator@example.com");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [deviceName, setDeviceName] = useState("Web browser");
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
@@ -114,14 +115,44 @@ function SignInContent() {
                 onChange={(event) => setCode(event.target.value)}
               />
             </label>
-            <button className="buttonSecondary" type="button" data-cy="auth-verify" onClick={verifyCode} disabled={loading}>
-              Verify and open account
-            </button>
-          </form>
-          {message ? <div className="banner" data-cy="auth-message" style={{ marginTop: 16 }}>{message}</div> : null}
-          <p className="muted" style={{ marginTop: 16 }}>
-            Already exploring? Go to <Link href="/account">Account</Link> after signing in.
-          </p>
+              <button className="buttonSecondary" type="button" data-cy="auth-verify" onClick={verifyCode} disabled={loading}>
+                Verify and open account
+              </button>
+            </form>
+            <section className="panel" style={{ marginTop: 16 }}>
+              <div className="label">Other sign-in entry points</div>
+              <p className="muted" style={{ marginTop: 8 }}>
+                GitHub, Microsoft, Facebook, and mobile-number entry points are surfaced here as connector slots. The
+                live path remains passwordless email until provider wiring is added.
+              </p>
+              <div className="formGrid" style={{ marginTop: 16 }}>
+                <label className="field fieldBlock">
+                  <span>Mobile number</span>
+                  <input
+                    className="input"
+                    type="tel"
+                    data-cy="auth-mobile"
+                    value={mobileNumber}
+                    onChange={(event) => setMobileNumber(event.target.value)}
+                  />
+                </label>
+              </div>
+              <div className="inlineActions" style={{ marginTop: 16 }}>
+                <button className="buttonSecondary" type="button" data-cy="auth-sso-github" disabled>
+                  Continue with GitHub
+                </button>
+                <button className="buttonSecondary" type="button" data-cy="auth-sso-microsoft" disabled>
+                  Continue with Microsoft
+                </button>
+                <button className="buttonSecondary" type="button" data-cy="auth-sso-facebook" disabled>
+                  Continue with Facebook
+                </button>
+              </div>
+            </section>
+            {message ? <div className="banner" data-cy="auth-message" style={{ marginTop: 16 }}>{message}</div> : null}
+            <p className="muted" style={{ marginTop: 16 }}>
+              Already exploring? Go to <Link href="/account">Account</Link> after signing in.
+            </p>
         </section>
       </div>
     </main>

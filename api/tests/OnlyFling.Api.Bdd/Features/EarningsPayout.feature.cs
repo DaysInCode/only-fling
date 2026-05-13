@@ -183,29 +183,29 @@ namespace OnlyFling.Api.Bdd.Features
 #line 15
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
-                            "path",
-                            "value"});
-                table5.AddRow(new string[] {
-                            "id",
-                            "payout-anna-paid"});
-                table5.AddRow(new string[] {
-                            "status",
-                            "paid"});
-#line 16
-    await testRunner.AndAsync("the response JSON array at \"payouts\" should contain an object with:", ((string)(null)), table5, "And ");
-#line hidden
                 global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
                 table6.AddRow(new string[] {
                             "id",
-                            "payout-anna-processing"});
+                            "payout-anna-paid"});
                 table6.AddRow(new string[] {
+                            "status",
+                            "paid"});
+#line 16
+    await testRunner.AndAsync("the response JSON array at \"payouts\" should contain an object with:", ((string)(null)), table6, "And ");
+#line hidden
+                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
+                            "path",
+                            "value"});
+                table7.AddRow(new string[] {
+                            "id",
+                            "payout-anna-processing"});
+                table7.AddRow(new string[] {
                             "status",
                             "processing"});
 #line 20
-    await testRunner.AndAsync("the response JSON array at \"payouts\" should contain an object with:", ((string)(null)), table6, "And ");
+    await testRunner.AndAsync("the response JSON array at \"payouts\" should contain an object with:", ((string)(null)), table7, "And ");
 #line hidden
 #line 25
     await testRunner.WhenAsync("I send a \"POST\" request to \"/payouts/request\" on the \"stable\" ring as \"anna\" with" +
@@ -236,20 +236,20 @@ namespace OnlyFling.Api.Bdd.Features
 #line 41
     await testRunner.AndAsync("the response JSON at \"summary.availableForPayoutMinor\" should equal \"20016\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table7.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "id",
                             "{{bddPayoutId}}"});
-                table7.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "status",
                             "pending"});
-                table7.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "amountMinor",
                             "3500"});
 #line 42
-    await testRunner.AndAsync("the response JSON array at \"payouts\" should contain an object with:", ((string)(null)), table7, "And ");
+    await testRunner.AndAsync("the response JSON array at \"payouts\" should contain an object with:", ((string)(null)), table8, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

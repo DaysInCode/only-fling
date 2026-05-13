@@ -88,14 +88,18 @@ No publish profiles or long-lived Azure secrets are required.
 ### Azure Static Web App deployment quick setup
 
 1. Create an Azure Static Web App in your target subscription/resource group.
-2. In the Static Web App, generate a deployment token and add it as GitHub secret `AZURE_STATIC_WEB_APPS_API_TOKEN`.
-3. In GitHub repository variables, set:
-   - `NEXT_PUBLIC_API_BASE_URL` (for example `https://<function-app>.azurewebsites.net/api`)
-   - `NEXT_PUBLIC_ENVIRONMENT` (`production` or `prod`)
+2. Add the deployment token to production environment secret `AZURE_STATIC_WEB_APPS_API_TOKEN_NICE_HILL_094710B03`.
+3. Set production variables:
+   - `SWA_PRODUCTION_URL` (for example `https://kind-ocean-0de01b903.7.azurestaticapps.net`)
+   - `NEXT_PUBLIC_ENVIRONMENT` (`production`)
    - optional `NEXT_PUBLIC_GA_MEASUREMENT_ID`
-4. Run GitHub Actions workflow `deploy-static-web-app` (manual dispatch or push to `main` with `web/**` changes).
+   - optional `NEXT_PUBLIC_API_BASE_URL` (if omitted, web defaults to `/api`)
+4. Link a backend API to the SWA for same-origin `/api`:
+   - upgrade SWA SKU to `Standard`
+   - link Function App with `az staticwebapp backends link ...`
+5. Run workflow `deploy-static-web-app`.
 
-This path hosts the Next.js static export in Azure Static Web Apps while keeping API deployment on Azure Functions.
+The workflow is now multi-stage: **build -> draft release -> deploy -> verify (web + API + payout screenshot artifact)**.
 
 ## 3. Canary + preview pattern
 

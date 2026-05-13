@@ -142,6 +142,7 @@ export default function AccountPage() {
               <FormField label={messages.accountPage.displayName} description={messages.accountPage.displayNameHint}>
                 <input
                   className="input"
+                  data-cy="account-display-name"
                   value={profile.displayName}
                   onChange={(event) => setProfile((current) => ({ ...current, displayName: event.target.value }))}
                 />
@@ -150,6 +151,7 @@ export default function AccountPage() {
                 <input
                   className="input"
                   type="email"
+                  data-cy="account-support-email"
                   value={profile.contact.supportEmail}
                   onChange={(event) =>
                     setProfile((current) => ({
@@ -162,6 +164,7 @@ export default function AccountPage() {
               <FormField label={messages.accountPage.avatarUrl} description={messages.accountPage.avatarHint}>
                 <input
                   className="input"
+                  data-cy="account-avatar-url"
                   value={profile.avatarUrl}
                   onChange={(event) => setProfile((current) => ({ ...current, avatarUrl: event.target.value }))}
                 />
@@ -190,6 +193,7 @@ export default function AccountPage() {
               <FormField label={messages.accountPage.bio}>
                 <textarea
                   className="textarea"
+                  data-cy="account-bio"
                   rows={4}
                   value={profile.bio}
                   onChange={(event) => setProfile((current) => ({ ...current, bio: event.target.value }))}
@@ -275,7 +279,7 @@ export default function AccountPage() {
               </label>
             </div>
             <div className="heroActions" style={{ marginTop: 18 }}>
-              <button className="button" type="button" onClick={saveProfile}>
+              <button className="button" type="button" data-cy="account-save-profile" onClick={saveProfile}>
                 {messages.accountPage.saveProfile}
               </button>
             </div>

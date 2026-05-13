@@ -17,22 +17,23 @@ namespace OnlyFling.Api.Bdd.Features
     
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Reqnroll", "3.0.0.0")]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class PublishingGovernanceAndStorageReportingFeature : object, global::Xunit.IClassFixture<PublishingGovernanceAndStorageReportingFeature.FixtureData>, global::Xunit.IAsyncLifetime
+    [global::Xunit.TraitAttribute("Category", "deployed")]
+    public partial class DeployedPublicAPISmokeFeature : object, global::Xunit.IClassFixture<DeployedPublicAPISmokeFeature.FixtureData>, global::Xunit.IAsyncLifetime
     {
         
         private global::Reqnroll.ITestRunner testRunner;
         
-        private static string[] featureTags = ((string[])(null));
+        private static string[] featureTags = new string[] {
+                "deployed"};
         
-        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new global::System.Globalization.CultureInfo("en-US"), "Features", "Publishing governance and storage reporting", "  Publishing should require approval, preserve admin boundaries, and expose stora" +
-                "ge usage reporting.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags, InitializeCucumberMessages());
+        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new global::System.Globalization.CultureInfo("en-US"), "Features", "Deployed public API smoke", "  Deployed public API routes should stay healthy after release.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags, InitializeCucumberMessages());
         
         private global::Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
-#line 1 "PublishingGovernance.feature"
+#line 1 "DeployedSmoke.feature"
 #line hidden
         
-        public PublishingGovernanceAndStorageReportingFeature(PublishingGovernanceAndStorageReportingFeature.FixtureData fixtureData, global::Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public DeployedPublicAPISmokeFeature(DeployedPublicAPISmokeFeature.FixtureData fixtureData, global::Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
         }
@@ -106,7 +107,7 @@ namespace OnlyFling.Api.Bdd.Features
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/PublishingGovernance.feature.ndjson", 3);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/DeployedSmoke.feature.ndjson", 3);
         }
         
         async global::System.Threading.Tasks.Task global::Xunit.IAsyncLifetime.InitializeAsync()
@@ -134,18 +135,18 @@ namespace OnlyFling.Api.Bdd.Features
             await this.TestTearDownAsync();
         }
         
-        [global::Xunit.SkippableFactAttribute(DisplayName="Creator publishing approvals and storage reports stay controlled")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Publishing governance and storage reporting")]
-        [global::Xunit.TraitAttribute("Description", "Creator publishing approvals and storage reports stay controlled")]
-        public async global::System.Threading.Tasks.Task CreatorPublishingApprovalsAndStorageReportsStayControlled()
+        [global::Xunit.SkippableFactAttribute(DisplayName="Public routes stay healthy on the deployed app")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Deployed public API smoke")]
+        [global::Xunit.TraitAttribute("Description", "Public routes stay healthy on the deployed app")]
+        public async global::System.Threading.Tasks.Task PublicRoutesStayHealthyOnTheDeployedApp()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "0";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Creator publishing approvals and storage reports stay controlled", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Public routes stay healthy on the deployed app", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 4
+#line 5
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -155,95 +156,53 @@ namespace OnlyFling.Api.Bdd.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 5
-    await testRunner.GivenAsync("I sign in on the \"stable\" ring as \"admin@example.com\" using device \"BDD Admin Pub" +
-                        "lish\" and store it as \"admin\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
-#line hidden
 #line 6
-    await testRunner.AndAsync("I sign in on the \"stable\" ring as \"anna@example.com\" using device \"BDD Anna Publi" +
-                        "sh\" and store it as \"anna\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.WhenAsync("I send a \"GET\" request to \"/health\" on the \"stable\" ring", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 7
+    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 8
-    await testRunner.WhenAsync("I send a \"POST\" request to \"/media/collections/publish-ready\" on the \"stable\" rin" +
-                        "g as \"anna\" with JSON:", "{\r\n  \"collectionId\": \"collection-anna-editorial\"\r\n}", ((global::Reqnroll.Table)(null)), "When ");
+    await testRunner.AndAsync("the response JSON at \"status\" should equal \"ok\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 9
+    await testRunner.AndAsync("the response JSON at \"deploymentRing\" should equal \"primary\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 11
+    await testRunner.WhenAsync("I send a \"GET\" request to \"/connectors\" on the \"stable\" ring", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 12
+    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 14
-    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.WhenAsync("I send a \"GET\" request to \"/connectors/modules\" on the \"stable\" ring", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 15
-    await testRunner.AndAsync("the response JSON at \"collection.publishApprovalStatus\" should equal \"pending\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 17
-    await testRunner.WhenAsync("I send a \"POST\" request to \"/admin/publishing/review\" on the \"stable\" ring as \"ad" +
-                        "min\" with JSON:", "{\r\n  \"collectionId\": \"collection-anna-editorial\",\r\n  \"decision\": \"approve\",\r\n  \"n" +
-                        "ote\": \"BDD approved\"\r\n}", ((global::Reqnroll.Table)(null)), "When ");
+                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
+                            "path",
+                            "value"});
+                table5.AddRow(new string[] {
+                            "id",
+                            "studio-preview"});
+#line 16
+    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table5, "And ");
+#line hidden
+#line 20
+    await testRunner.WhenAsync("I send a \"GET\" request to \"/plugins/active\" on the \"stable\" ring", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 21
+    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 23
+    await testRunner.WhenAsync("I send a \"GET\" request to \"/items\" on the \"stable\" ring", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 24
+    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 25
-    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 26
-    await testRunner.AndAsync("the response JSON at \"collection.publishApprovalStatus\" should equal \"approved\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-                global::Reqnroll.Table table26 = new global::Reqnroll.Table(new string[] {
-                            "path",
-                            "value"});
-                table26.AddRow(new string[] {
-                            "platform",
-                            "instagram"});
-                table26.AddRow(new string[] {
-                            "status",
-                            "published"});
-#line 27
-    await testRunner.AndAsync("the response JSON array at \"logs\" should contain an object with:", ((string)(null)), table26, "And ");
-#line hidden
-#line 32
-    await testRunner.WhenAsync("I send a \"GET\" request to \"/media/publishing/logs?collectionId=collection-anna-ed" +
-                        "itorial\" on the \"stable\" ring as \"anna\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 33
-    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-                global::Reqnroll.Table table27 = new global::Reqnroll.Table(new string[] {
-                            "path",
-                            "value"});
-                table27.AddRow(new string[] {
-                            "collectionId",
-                            "collection-anna-editorial"});
-                table27.AddRow(new string[] {
-                            "platform",
-                            "instagram"});
-#line 34
-    await testRunner.AndAsync("the response JSON array at \"logs\" should contain an object with:", ((string)(null)), table27, "And ");
-#line hidden
-#line 39
-    await testRunner.WhenAsync("I send a \"GET\" request to \"/account/audit?limit=50\" on the \"stable\" ring as \"anna" +
-                        "\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 40
-    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 41
-    await testRunner.AndAsync("the response body should not contain \"admin.collection.publish.reviewed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 43
-    await testRunner.WhenAsync("I send a \"GET\" request to \"/admin/reports/storage\" on the \"stable\" ring as \"admin" +
-                        "\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 44
-    await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 45
-    await testRunner.AndAsync("the response JSON at \"report.softCapBytes\" should equal \"107374182400\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 47
-    await testRunner.WhenAsync("I send a \"POST\" request to \"/account/platforms/onlyfans/manage\" on the \"stable\" r" +
-                        "ing as \"anna\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 48
-    await testRunner.ThenAsync("the response status should be 409", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 49
-    await testRunner.AndAsync("the response JSON at \"error\" should equal \"onlyfans-plugin-disabled\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("the response JSON at \"commission.platformFeePercent\" should equal \"5\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -256,12 +215,12 @@ namespace OnlyFling.Api.Bdd.Features
             
             async global::System.Threading.Tasks.Task global::Xunit.IAsyncLifetime.InitializeAsync()
             {
-                await PublishingGovernanceAndStorageReportingFeature.FeatureSetupAsync();
+                await DeployedPublicAPISmokeFeature.FeatureSetupAsync();
             }
             
             async global::System.Threading.Tasks.Task global::Xunit.IAsyncLifetime.DisposeAsync()
             {
-                await PublishingGovernanceAndStorageReportingFeature.FeatureTearDownAsync();
+                await DeployedPublicAPISmokeFeature.FeatureTearDownAsync();
             }
         }
     }

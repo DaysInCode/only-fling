@@ -258,17 +258,17 @@ namespace OnlyFling.Api.Bdd.Features
 #line 74
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table27 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table28 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table27.AddRow(new string[] {
+                table28.AddRow(new string[] {
                             "mediaItemId",
                             "{{uploadMediaItemId}}"});
-                table27.AddRow(new string[] {
+                table28.AddRow(new string[] {
                             "status",
                             "pending"});
 #line 75
-    await testRunner.AndAsync("the response JSON array at \"events\" should contain an object with:", ((string)(null)), table27, "And ");
+    await testRunner.AndAsync("the response JSON array at \"events\" should contain an object with:", ((string)(null)), table28, "And ");
 #line hidden
 #line 80
     await testRunner.WhenAsync("I send a \"GET\" request to \"/media/uploads/queue\" on the \"stable\" ring as \"uploade" +
@@ -277,17 +277,17 @@ namespace OnlyFling.Api.Bdd.Features
 #line 81
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table28 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table29 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table28.AddRow(new string[] {
+                table29.AddRow(new string[] {
                             "mediaItemId",
                             "{{uploadMediaItemId}}"});
-                table28.AddRow(new string[] {
+                table29.AddRow(new string[] {
                             "jobType",
                             "metadata-scrub"});
 #line 82
-    await testRunner.AndAsync("the response JSON array at \"workItems\" should contain an object with:", ((string)(null)), table28, "And ");
+    await testRunner.AndAsync("the response JSON array at \"workItems\" should contain an object with:", ((string)(null)), table29, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

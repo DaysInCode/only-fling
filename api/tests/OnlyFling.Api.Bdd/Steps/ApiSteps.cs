@@ -98,8 +98,18 @@ public sealed class ApiSteps(ApiTestWorld world)
     public async Task ThenTheFileAtShouldContain(string path, string expectedText)
     {
         var resolvedPath = world.Resolve(path);
-        Assert.True(File.Exists(resolvedPath), $"Expected file '{resolvedPath}' to exist.");
-        var contents = await File.ReadAllTextAsync(resolvedPath);
+        string contents;
+        if (Uri.TryCreate(resolvedPath, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        {
+            using var client = new HttpClient();
+            contents = await client.GetStringAsync(uri);
+        }
+        else
+        {
+            Assert.True(File.Exists(resolvedPath), $"Expected file '{resolvedPath}' to exist.");
+            contents = await File.ReadAllTextAsync(resolvedPath);
+        }
+
         Assert.Contains(expectedText, contents, StringComparison.Ordinal);
     }
 

@@ -14,10 +14,13 @@ namespace OnlyFling.Api.Bdd.Support;
 
 public sealed class BddApiSystem : IDisposable
 {
+    private static readonly HttpClient Http = new();
     private readonly string _originalCurrentDirectory = Environment.CurrentDirectory;
     private readonly string _workspacePath;
+    private readonly string? _remoteBaseUrl;
     private readonly IServiceProvider _requestServices;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly string? _remoteAuthToken;
     private readonly PublicFunctions _stablePublicFunctions;
     private readonly PublicFunctions _canaryPublicFunctions;
     private readonly AccountFunctions _accountFunctions;
@@ -26,6 +29,8 @@ public sealed class BddApiSystem : IDisposable
 
     public BddApiSystem()
     {
+        _remoteBaseUrl = NormalizeBaseUrl(Environment.GetEnvironmentVariable("ONLYFLING_REMOTE_BASE_URL"));
+        _remoteAuthToken = Environment.GetEnvironmentVariable("ONLYFLING_BDD_REMOTE_AUTH_TOKEN");
         _workspacePath = Path.Combine(AppContext.BaseDirectory, "bdd-artifacts", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(_workspacePath);
         Environment.CurrentDirectory = _workspacePath;
@@ -58,6 +63,11 @@ public sealed class BddApiSystem : IDisposable
 
     public async Task<ApiResponse> SendAsync(string ring, string method, string route, string? bearerToken = null, string? jsonBody = null)
     {
+        if (!string.IsNullOrWhiteSpace(_remoteBaseUrl))
+        {
+            return await SendRemoteAsync(method, route, bearerToken, jsonBody);
+        }
+
         var normalizedRoute = route.Trim();
         var relative = normalizedRoute.StartsWith('/') ? normalizedRoute : $"/{normalizedRoute}";
         var request = CreateRequest(method, relative, bearerToken, jsonBody);
@@ -81,6 +91,41 @@ public sealed class BddApiSystem : IDisposable
         {
             Directory.Delete(_workspacePath, recursive: true);
         }
+    }
+
+    private async Task<ApiResponse> SendRemoteAsync(string method, string route, string? bearerToken, string? jsonBody)
+    {
+        var requestUri = new Uri(new Uri(_remoteBaseUrl!, UriKind.Absolute), route.TrimStart('/'));
+        using var request = new HttpRequestMessage(new HttpMethod(method.ToUpperInvariant()), requestUri);
+
+        if (!string.IsNullOrWhiteSpace(bearerToken))
+        {
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", bearerToken);
+        }
+
+        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+        var normalizedRoute = route.Trim().TrimStart('/');
+
+        if (!string.IsNullOrWhiteSpace(_remoteAuthToken) && string.Equals(normalizedRoute, "auth/request-link", StringComparison.OrdinalIgnoreCase))
+        {
+            request.Headers.TryAddWithoutValidation("x-bdd-remote-auth", _remoteAuthToken);
+        }
+
+        if (jsonBody is not null && !string.Equals(method, "GET", StringComparison.OrdinalIgnoreCase) && !string.Equals(method, "OPTIONS", StringComparison.OrdinalIgnoreCase))
+        {
+            request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        }
+
+        using var response = await Http.SendAsync(request);
+        var bodyText = await response.Content.ReadAsStringAsync();
+        var json = string.IsNullOrWhiteSpace(bodyText) ? null : JsonDocument.Parse(bodyText);
+        return new ApiResponse
+        {
+            StatusCode = (int)response.StatusCode,
+            BodyText = bodyText,
+            Json = json,
+        };
     }
 
     private TestHttpRequestData CreateRequest(string method, string route, string? bearerToken, string? jsonBody)
@@ -228,4 +273,7 @@ public sealed class BddApiSystem : IDisposable
         services.Configure<WorkerOptions>(options => options.Serializer = serializer);
         return services.BuildServiceProvider();
     }
+
+    private static string? NormalizeBaseUrl(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : value.TrimEnd('/') + "/";
 }

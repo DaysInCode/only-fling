@@ -7,7 +7,7 @@ param(
   [string]$ComposeFile = (Join-Path (Split-Path -Parent $PSScriptRoot) "podman-compose.yml"),
   [string]$WebUrl = "http://127.0.0.1:3000",
   [string]$ApiBaseUrl = "http://127.0.0.1:7071/api",
-  [int]$TimeoutSeconds = 240,
+[int]$TimeoutSeconds = 480,
   [switch]$IncludeMobile,
   [switch]$IncludeMcp,
   [switch]$DryRun
@@ -19,10 +19,11 @@ $repoRoot = Get-RepoRoot
 $aspireAppHost = Resolve-RepoPath -RelativePath "aspire\OnlyFling.AppHost\OnlyFling.AppHost.csproj"
 $managedProcesses = @()
 $containersStarted = $false
+$effectiveApiBaseUrl = $ApiBaseUrl
 
 function Invoke-LocalValidation {
-  & (Join-Path $PSScriptRoot "test-deployment.ps1") -WebUrl $WebUrl -ApiBaseUrl $ApiBaseUrl -ApiSampleCount 5
-  & (Join-Path $PSScriptRoot "measure-api.ps1") -BaseUrl $ApiBaseUrl -Path "/health" -Samples 5
+  & (Join-Path $PSScriptRoot "test-deployment.ps1") -WebUrl $WebUrl -ApiBaseUrl $effectiveApiBaseUrl -ApiSampleCount 5
+  & (Join-Path $PSScriptRoot "measure-api.ps1") -BaseUrl $effectiveApiBaseUrl -Path "/health" -Samples 5
 }
 
 function Ensure-LocalConfigFiles {
@@ -57,9 +58,32 @@ function Start-ContainerRuntime {
   $script:containersStarted = $true
 }
 
+function Stop-LocalListeners {
+  param(
+    [int[]]$Ports
+  )
+
+  foreach ($port in $Ports) {
+    $listeners = @(Get-NetTCPConnection -State Listen -LocalPort $port -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique)
+    foreach ($procId in $listeners) {
+      if ($procId -and $procId -gt 0 -and $procId -ne $PID) {
+        try {
+          Stop-Process -Id $procId -ErrorAction Stop
+        } catch {
+          Write-Warning "Unable to stop process $procId listening on port ${port}: $($_.Exception.Message)"
+        }
+      }
+    }
+  }
+}
+
 function Start-ProcessRuntime {
   Assert-ToolCommand -Name "npm"
   Ensure-LocalConfigFiles
+
+  if ($Mode -eq "Validate") {
+    Stop-LocalListeners -Ports @(7071, 3000)
+  }
 
   if ((Test-Path $ComposeFile) -and (Test-ToolCommand -Name "podman")) {
     & podman compose -f $ComposeFile down *> $null
@@ -175,7 +199,18 @@ try {
     "Processes" { Start-ProcessRuntime }
   }
 
-  Wait-ForUrl -Url "$($ApiBaseUrl.TrimEnd('/'))/health" -TimeoutSeconds $TimeoutSeconds | Out-Null
+  $healthUrl = "$($effectiveApiBaseUrl.TrimEnd('/'))/health"
+  try {
+    Wait-ForUrl -Url $healthUrl -TimeoutSeconds $TimeoutSeconds | Out-Null
+  } catch {
+    if ($effectiveApiBaseUrl -like "http://127.0.0.1:*") {
+      $fallbackApiBaseUrl = $effectiveApiBaseUrl -replace "http://127\.0\.0\.1", "http://localhost"
+      Wait-ForUrl -Url "$($fallbackApiBaseUrl.TrimEnd('/'))/health" -TimeoutSeconds $TimeoutSeconds | Out-Null
+      $effectiveApiBaseUrl = $fallbackApiBaseUrl
+    } else {
+      throw
+    }
+  }
   Wait-ForUrl -Url $WebUrl -TimeoutSeconds $TimeoutSeconds | Out-Null
 
   Invoke-LocalValidation
@@ -184,7 +219,7 @@ try {
     Write-Host ""
     Write-Host "Local system is ready:" -ForegroundColor Green
     Write-Host "  Web: $WebUrl"
-    Write-Host "  API: $ApiBaseUrl"
+    Write-Host "  API: $effectiveApiBaseUrl"
     if ($mcpAvailable) {
       Write-Host "  MCP: http://127.0.0.1:3100"
     }

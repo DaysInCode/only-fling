@@ -23,6 +23,7 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       - name: Configure remote auth token and dev mode
         shell: bash
+        continue-on-error: true
         run: |
           az functionapp config appsettings set \
             --resource-group "${{ vars.AZURE_RESOURCE_GROUP_PROD }}" \

@@ -168,53 +168,53 @@ namespace OnlyFling.Api.Bdd.Features
 #line 9
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
-                            "path",
-                            "value"});
-                table12.AddRow(new string[] {
-                            "id",
-                            "onlyfans"});
-                table12.AddRow(new string[] {
-                            "status",
-                            "template"});
-#line 10
-    await testRunner.AndAsync("the response JSON array at \"connectors\" should contain an object with:", ((string)(null)), table12, "And ");
-#line hidden
                 global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
                 table13.AddRow(new string[] {
                             "id",
-                            "adult-platform-readiness"});
+                            "onlyfans"});
                 table13.AddRow(new string[] {
-                            "eligibility.allowed",
-                            "true"});
-                table13.AddRow(new string[] {
-                            "eligibility.requiresCanaryRing",
-                            "true"});
-                table13.AddRow(new string[] {
-                            "eligibility.effectiveChannel",
-                            "stable"});
-#line 14
-    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table13, "And ");
+                            "status",
+                            "template"});
+#line 10
+    await testRunner.AndAsync("the response JSON array at \"connectors\" should contain an object with:", ((string)(null)), table13, "And ");
 #line hidden
                 global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
                 table14.AddRow(new string[] {
                             "id",
-                            "adult-platform-preview"});
+                            "adult-platform-readiness"});
                 table14.AddRow(new string[] {
                             "eligibility.allowed",
-                            "false"});
-                table14.AddRow(new string[] {
-                            "eligibility.requiresPreviewEnrollment",
                             "true"});
                 table14.AddRow(new string[] {
+                            "eligibility.requiresCanaryRing",
+                            "true"});
+                table14.AddRow(new string[] {
+                            "eligibility.effectiveChannel",
+                            "stable"});
+#line 14
+    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table14, "And ");
+#line hidden
+                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
+                            "path",
+                            "value"});
+                table15.AddRow(new string[] {
+                            "id",
+                            "adult-platform-preview"});
+                table15.AddRow(new string[] {
+                            "eligibility.allowed",
+                            "false"});
+                table15.AddRow(new string[] {
+                            "eligibility.requiresPreviewEnrollment",
+                            "true"});
+                table15.AddRow(new string[] {
                             "eligibility.reason",
                             "preview-enrollment-required"});
 #line 20
-    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table14, "And ");
+    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table15, "And ");
 #line hidden
 #line 27
     await testRunner.WhenAsync("I send a \"GET\" request to \"/connectors/modules\" on the \"stable\" ring as \"luca\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
@@ -222,35 +222,35 @@ namespace OnlyFling.Api.Bdd.Features
 #line 28
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
-                            "path",
-                            "value"});
-                table15.AddRow(new string[] {
-                            "id",
-                            "adult-platform-readiness"});
-                table15.AddRow(new string[] {
-                            "eligibility.allowed",
-                            "false"});
-                table15.AddRow(new string[] {
-                            "eligibility.reason",
-                            "account-age-restricted"});
-#line 29
-    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table15, "And ");
-#line hidden
                 global::Reqnroll.Table table16 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
                 table16.AddRow(new string[] {
                             "id",
-                            "creator-analytics"});
+                            "adult-platform-readiness"});
                 table16.AddRow(new string[] {
                             "eligibility.allowed",
-                            "true"});
+                            "false"});
                 table16.AddRow(new string[] {
+                            "eligibility.reason",
+                            "account-age-restricted"});
+#line 29
+    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table16, "And ");
+#line hidden
+                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
+                            "path",
+                            "value"});
+                table17.AddRow(new string[] {
+                            "id",
+                            "creator-analytics"});
+                table17.AddRow(new string[] {
+                            "eligibility.allowed",
+                            "true"});
+                table17.AddRow(new string[] {
                             "eligibility.effectiveChannel",
                             "stable"});
 #line 34
-    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table16, "And ");
+    await testRunner.AndAsync("the response JSON array at \"modules\" should contain an object with:", ((string)(null)), table17, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

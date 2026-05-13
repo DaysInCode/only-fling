@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-const defaultApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:7071/api";
+const defaultApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 const tokenStorageKey = "onlyfling-token";
 
 export type ApiResult<T> = {

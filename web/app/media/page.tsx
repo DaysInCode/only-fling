@@ -461,7 +461,7 @@ export default function MediaPage() {
                 />
               </FormField>
               <div className="inlineActions" style={{ marginTop: 18 }}>
-                <button className="button" type="button" onClick={() => void saveCollection()}>
+                <button className="button" type="button" data-cy="media-create-collection" onClick={() => void saveCollection()}>
                   {editingCollectionId ? messages.mediaPage.collectionForm.update : messages.mediaPage.collectionForm.create}
                 </button>
                 {editingCollectionId ? (
@@ -562,7 +562,12 @@ export default function MediaPage() {
               </div>
               <div className="form" style={{ marginTop: 18 }}>
                 <FormField label={messages.mediaPage.uploadForm.file}>
-                  <input type="file" className="input" onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)} />
+                  <input
+                    type="file"
+                    className="input"
+                    data-cy="media-upload-file"
+                    onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
+                  />
                 </FormField>
                 <div className="formGrid">
                   <FormField label={messages.mediaPage.uploadForm.mediaTitle}>
@@ -612,7 +617,7 @@ export default function MediaPage() {
                   <input type="checkbox" checked={uploadConsentRights} onChange={(event) => setUploadConsentRights(event.target.checked)} />
                   <span>{messages.mediaPage.uploadForm.confirmRights}</span>
                 </label>
-                <button className="button" type="button" onClick={() => void createUpload()}>
+                <button className="button" type="button" data-cy="media-start-upload" onClick={() => void createUpload()}>
                   {messages.mediaPage.uploadForm.startUpload}
                 </button>
               </div>

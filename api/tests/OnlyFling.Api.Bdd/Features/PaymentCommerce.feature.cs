@@ -169,20 +169,20 @@ namespace OnlyFling.Api.Bdd.Features
 #line 9
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table18 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table17.AddRow(new string[] {
+                table18.AddRow(new string[] {
                             "id",
                             "stripe"});
-                table17.AddRow(new string[] {
+                table18.AddRow(new string[] {
                             "enabled",
                             "true"});
-                table17.AddRow(new string[] {
+                table18.AddRow(new string[] {
                             "category",
                             "payment"});
 #line 10
-    await testRunner.AndAsync("the response JSON array at \"plugins\" should contain an object with:", ((string)(null)), table17, "And ");
+    await testRunner.AndAsync("the response JSON array at \"plugins\" should contain an object with:", ((string)(null)), table18, "And ");
 #line hidden
 #line 16
     await testRunner.WhenAsync("I send a \"POST\" request to \"/media/items/purchase\" on the \"stable\" ring as \"buyer" +
@@ -322,20 +322,20 @@ namespace OnlyFling.Api.Bdd.Features
 #line 130
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table18 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table19 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table18.AddRow(new string[] {
+                table19.AddRow(new string[] {
                             "label",
                             "Leisure content value"});
-                table18.AddRow(new string[] {
+                table19.AddRow(new string[] {
                             "status",
                             "paid"});
-                table18.AddRow(new string[] {
+                table19.AddRow(new string[] {
                             "totalMinor",
                             "2200"});
 #line 131
-    await testRunner.AndAsync("the response JSON array at \"invoices\" should contain an object with:", ((string)(null)), table18, "And ");
+    await testRunner.AndAsync("the response JSON array at \"invoices\" should contain an object with:", ((string)(null)), table19, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

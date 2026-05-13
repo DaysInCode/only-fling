@@ -25,8 +25,8 @@ export function HealthStatus() {
       <div className="label">Platform health</div>
       <div className="kpi">{payload?.status ?? "..."}</div>
       <p className="muted">
-        Default platform fee: {payload?.platformFeePercent ?? "--"}%. API health updates from the local Azure
-        Functions host.
+        Default platform fee: {payload?.platformFeePercent ?? "--"}%. API health updates from the active
+        deployment backend.
       </p>
     </div>
   );

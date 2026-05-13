@@ -165,23 +165,23 @@ namespace OnlyFling.Api.Bdd.Features
 #line 8
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table8.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "id",
                             "collection-anna-editorial"});
-                table8.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "publishState",
                             "published"});
-                table8.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "soldCount",
                             "20"});
-                table8.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "earnedMinor",
                             "26100"});
 #line 9
-    await testRunner.AndAsync("the response JSON array at \"collections\" should contain an object with:", ((string)(null)), table8, "And ");
+    await testRunner.AndAsync("the response JSON array at \"collections\" should contain an object with:", ((string)(null)), table9, "And ");
 #line hidden
 #line 16
     await testRunner.WhenAsync("I send a \"GET\" request to \"/media/collections/collection-anna-editorial/items\" on" +
@@ -190,50 +190,50 @@ namespace OnlyFling.Api.Bdd.Features
 #line 17
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
-                            "path",
-                            "value"});
-                table9.AddRow(new string[] {
-                            "id",
-                            "media-anna-ready-1"});
-                table9.AddRow(new string[] {
-                            "mediaType",
-                            "image"});
-                table9.AddRow(new string[] {
-                            "contentType",
-                            "image/jpeg"});
-                table9.AddRow(new string[] {
-                            "fileName",
-                            "image-a1b2c3.jpg"});
-                table9.AddRow(new string[] {
-                            "uploadStatus",
-                            "ready"});
-                table9.AddRow(new string[] {
-                            "publishState",
-                            "published"});
-                table9.AddRow(new string[] {
-                            "policyArtifact.id",
-                            "policy-anna-editorial"});
-#line 18
-    await testRunner.AndAsync("the response JSON array at \"items\" should contain an object with:", ((string)(null)), table9, "And ");
-#line hidden
                 global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
                 table10.AddRow(new string[] {
                             "id",
-                            "media-anna-processing-1"});
+                            "media-anna-ready-1"});
+                table10.AddRow(new string[] {
+                            "mediaType",
+                            "image"});
+                table10.AddRow(new string[] {
+                            "contentType",
+                            "image/jpeg"});
+                table10.AddRow(new string[] {
+                            "fileName",
+                            "image-a1b2c3.jpg"});
                 table10.AddRow(new string[] {
                             "uploadStatus",
-                            "processing"});
+                            "ready"});
                 table10.AddRow(new string[] {
+                            "publishState",
+                            "published"});
+                table10.AddRow(new string[] {
+                            "policyArtifact.id",
+                            "policy-anna-editorial"});
+#line 18
+    await testRunner.AndAsync("the response JSON array at \"items\" should contain an object with:", ((string)(null)), table10, "And ");
+#line hidden
+                global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
+                            "path",
+                            "value"});
+                table11.AddRow(new string[] {
+                            "id",
+                            "media-anna-processing-1"});
+                table11.AddRow(new string[] {
+                            "uploadStatus",
+                            "processing"});
+                table11.AddRow(new string[] {
                             "preview.status",
                             "queued"});
-                table10.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "publishState",
                             "draft"});
 #line 27
-    await testRunner.AndAsync("the response JSON array at \"items\" should contain an object with:", ((string)(null)), table10, "And ");
+    await testRunner.AndAsync("the response JSON array at \"items\" should contain an object with:", ((string)(null)), table11, "And ");
 #line hidden
 #line 34
     await testRunner.WhenAsync("I send a \"POST\" request to \"/media/items/update\" on the \"stable\" ring as \"anna\" w" +
@@ -254,17 +254,17 @@ namespace OnlyFling.Api.Bdd.Features
 #line 49
     await testRunner.ThenAsync("the response status should be 200", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
                             "path",
                             "value"});
-                table11.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "id",
                             "media-anna-processing-1"});
-                table11.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "publishState",
                             "published"});
 #line 50
-    await testRunner.AndAsync("the response JSON array at \"items\" should contain an object with:", ((string)(null)), table11, "And ");
+    await testRunner.AndAsync("the response JSON array at \"items\" should contain an object with:", ((string)(null)), table12, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
