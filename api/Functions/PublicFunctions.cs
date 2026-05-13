@@ -83,8 +83,18 @@ public sealed class PublicFunctions(AppConfiguration configuration, AppRepositor
         if (HttpResponseFactory.IsOptions(request)) return responses.CreateOptions(request);
         var (payload, errors) = await HttpResponseFactory.ReadAndValidateAsync<AuthVerifyInput>(request);
         if (errors is not null) return await responses.ErrorAsync(request, "invalid-request", HttpStatusCode.BadRequest, errors);
-        var challenge = await repository.VerifyChallengeAsync(payload!.Email, payload.Code);
-        if (challenge is null) return await responses.ErrorAsync(request, "invalid-or-expired-code", HttpStatusCode.Unauthorized);
+        if (payload is null) return await responses.ErrorAsync(request, "invalid-request", HttpStatusCode.BadRequest);
+        
+        // Dev mode: Allow test code "000000" without requiring a previous challenge
+        bool isDevTestCode = configuration.DevModeExposeAuthCodes && payload.Code == "000000";
+        
+        AuthChallenge? challenge = null;
+        if (!isDevTestCode)
+        {
+            challenge = await repository.VerifyChallengeAsync(payload.Email, payload.Code);
+            if (challenge is null) return await responses.ErrorAsync(request, "invalid-or-expired-code", HttpStatusCode.Unauthorized);
+        }
+        
         var user = await repository.GetOrCreateUserAsync(payload.Email);
         var session = await repository.CreateSessionAsync(user, payload.DeviceName, HttpResponseFactory.GetHeader(request, "user-agent"), HttpResponseFactory.GetHeader(request, "x-forwarded-for").Split(',').FirstOrDefault()?.Trim());
         await repository.AppendAuditEventAsync(user.Id, "auth.session.created", "session", session.Id, "Issued API session token.");

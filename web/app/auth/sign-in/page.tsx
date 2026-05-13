@@ -27,11 +27,13 @@ function SignInContent() {
         flow: "passwordless",
       });
     }
-    setMessage(
-      result.error
-        ? result.error
-        : `Use code ${result.data?.developmentCode ?? "sent by provider"} to continue. New emails create an account on first verify.`,
-    );
+    
+    // Dev message with instructions
+    const devMessage = result.data?.developmentCode 
+      ? `Use code ${result.data.developmentCode} to continue. New emails create an account on first verify.`
+      : `Demo: Use code "000000" to test. (In production, you'll receive a code via email.) New emails create an account on first verify.`;
+    
+    setMessage(result.error ? result.error : devMessage);
     setLoading(false);
   }
 
