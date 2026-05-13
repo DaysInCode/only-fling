@@ -1,0 +1,73 @@
+name: deployed-bdd
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - deploy-static-web-app
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  configure_remote_auth:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Configure remote auth token and dev mode
+        shell: bash
+        run: |
+          az functionapp config appsettings set \
+            --resource-group "${{ vars.AZURE_RESOURCE_GROUP_PROD }}" \
+            --name "onlyfling-api-prod" \
+            --settings \
+              ONLYFLING_BDD_REMOTE_AUTH_TOKEN="${{ secrets.ONLYFLING_BDD_REMOTE_AUTH_TOKEN }}" \
+              ONLYFLING_DEV_MODE_AUTH_CODES="true"
+
+  public_api_bdd:
+    needs: configure_remote_auth
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      ONLYFLING_REMOTE_BASE_URL: ${{ vars.SWA_PRODUCTION_URL }}/api
+      ONLYFLING_BDD_REMOTE_AUTH_TOKEN: ${{ secrets.ONLYFLING_BDD_REMOTE_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Run deployed BDD smoke
+        run: >
+          dotnet test api/tests/OnlyFling.Api.Bdd/OnlyFling.Api.Bdd.csproj
+          -c Release
+          -p:CollectCoverage=false
+          --filter "FeatureTitle=Deployed public API smoke"
+
+  ui_validation:
+    needs: configure_remote_auth
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_BASE_URL: ${{ vars.SWA_PRODUCTION_URL }}
+      CYPRESS_API_BASE_URL: ${{ vars.SWA_PRODUCTION_URL }}/api
+      CYPRESS_BDD_REMOTE_AUTH_TOKEN: ${{ secrets.ONLYFLING_BDD_REMOTE_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci
+      - name: Run deployed Cypress journey
+        working-directory: web
+        run: npx cypress run --spec cypress/e2e/deployed-user-journey.cy.ts

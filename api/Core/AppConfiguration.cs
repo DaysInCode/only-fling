@@ -14,6 +14,7 @@ public sealed class AppConfiguration
     public string StripeCheckoutBaseUrl => Stripe.CheckoutBaseUrl;
     public string PaypalPayoutClientId { get; } = Environment.GetEnvironmentVariable("PAYPAL_PAYOUT_CLIENT_ID") ?? string.Empty;
     public string PaypalPayoutClientSecret { get; } = Environment.GetEnvironmentVariable("PAYPAL_PAYOUT_CLIENT_SECRET") ?? string.Empty;
+    public string BddRemoteAuthToken { get; } = Environment.GetEnvironmentVariable("ONLYFLING_BDD_REMOTE_AUTH_TOKEN") ?? string.Empty;
     public string? SeedImportRoot { get; } = Environment.GetEnvironmentVariable("ADMIN_SEED_IMPORT_ROOT");
     public decimal PlatformTransactionCutRate => System.PlatformTransactionCutRate;
     public int PlatformFeePercent => (int)Math.Round(PlatformTransactionCutRate * 100m, MidpointRounding.AwayFromZero);
@@ -22,6 +23,8 @@ public sealed class AppConfiguration
     public bool IsLocalDevelopment => string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID"));
     public bool StripeConfigured => Stripe.IsConfigured;
     public bool PaypalPayoutConfigured => !string.IsNullOrWhiteSpace(PaypalPayoutClientId) && !string.IsNullOrWhiteSpace(PaypalPayoutClientSecret);
+    public bool BddRemoteAuthConfigured => !string.IsNullOrWhiteSpace(BddRemoteAuthToken);
+    public bool DevModeExposeAuthCodes { get; } = string.Equals(Environment.GetEnvironmentVariable("ONLYFLING_DEV_MODE_AUTH_CODES"), "true", StringComparison.OrdinalIgnoreCase);
     public bool StorageEnabled
     {
         get

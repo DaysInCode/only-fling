@@ -73,7 +73,8 @@ public sealed class PublicFunctions(AppConfiguration configuration, AppRepositor
         var challenge = await repository.CreateChallengeAsync(payload!.Email);
         var user = await repository.GetOrCreateUserAsync(payload.Email);
         await repository.AppendAuditEventAsync(user.Id, "auth.challenge.created", "user", user.Id, "Created passwordless sign-in challenge.");
-        return await responses.JsonAsync(request, new AuthRequestResponse { Message = "Challenge created.", DevelopmentCode = configuration.IsLocalDevelopment ? challenge.Code : null });
+        var exposeDevelopmentCode = configuration.IsLocalDevelopment || configuration.DevModeExposeAuthCodes || IsRemoteBddAuthRequest(request);
+        return await responses.JsonAsync(request, new AuthRequestResponse { Message = "Challenge created.", DevelopmentCode = exposeDevelopmentCode ? challenge.Code : null });
     }
 
     [Function("AuthVerify")]
@@ -89,6 +90,10 @@ public sealed class PublicFunctions(AppConfiguration configuration, AppRepositor
         await repository.AppendAuditEventAsync(user.Id, "auth.session.created", "session", session.Id, "Issued API session token.");
         return await responses.JsonAsync(request, new AuthVerifyResponse { Token = session.Token, User = user });
     }
+
+    private bool IsRemoteBddAuthRequest(HttpRequestData request)
+        => configuration.BddRemoteAuthConfigured &&
+           string.Equals(HttpResponseFactory.GetHeader(request, "x-bdd-remote-auth"), configuration.BddRemoteAuthToken, StringComparison.Ordinal);
 
     [Function("Me")]
     public async Task<HttpResponseData> Me([HttpTrigger(AuthorizationLevel.Anonymous, "get", "options", Route = "me")] HttpRequestData request)
